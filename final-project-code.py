@@ -16,10 +16,20 @@
 
 import json
 import requests
+import re
+import unittest
+from datetime import datetime, timezone
 
-def call_api_function(api_key): #Kaz
+def hide_api_keys(): #Kaz
+    # Hide API keys for security purposes. (like in HW)
+    # Input: None
+    # Output: A file or dictionary containing hidden API keys
+    pass
+
+
+def call_api_function(url): #Kaz
     # Send requests to all APIs (birds, weather, geocoding)
-    # Input: API key needed for authentication (string)
+    # Input: url needed for authentication (string)
     # Output: A dictionary containing the raw API responses
     pass
 
@@ -31,10 +41,20 @@ def grab_location(latitude, longitude): #Kaz
     pass
 
 
-def convert_time_stamps(timestanps): #Vida
-    # Converts time stamps from birds observation into UNIX time
-    # Input: A list/dictionary of timestamp string
-    # Output: A list or dictionary of timestamp strings (list of float)
+def convert_time_stamps(timestamps): #Vida
+    # Converts ONE timestamp at a time, and the Bird cleaning function loops through all records and converts each individually
+    # No need for lists or dictionaries in the converter itself, I feel that will be less buggy
+    # Input: timestamp (a string)
+    # Output: converted timestamp (a float)
+    if not timestamps or timestamps.strip() == "":
+        return None
+
+    try:
+        dt = datetime.strptime(timestamps, "%Y-%m-%d %H:%M")
+        dt = dt.replace(tzinfo=timezone.utc)
+        return dt.timestamp()
+    except ValueError:
+        return None
     pass
 
 
@@ -97,5 +117,16 @@ def main(): #Kaz
 
 
 
+# Debugging/testing area for any code
+class TestCases(unittest.TestCase):
+    # for testing convert_time_stamps function
+    def test_convert_time_stamps(self):
+        self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
+        self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
+        self.assertEqual(convert_time_stamps(""), None)
+        self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
 
+if __name__ == '__main__':
+    # main()
+    unittest.main(verbosity=2)
 
