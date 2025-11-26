@@ -24,7 +24,29 @@ def hide_api_keys(): #Kaz
     # Hide API keys for security purposes. (like in HW)
     # Input: None
     # Output: A file or dictionary containing hidden API keys
-    pass
+
+    # Read API keys from a file named 'api_keys.txt'
+    # Format:
+    # BIRD_API_KEY=your_bird_api_key
+    # WEATHER_API_KEY=your_weather_api_key
+    # GEOCODING_API_KEY=your_geocoding_api_key
+
+    try:
+        with open('api_keys.txt', 'r') as file:
+            api_keys = {}
+            for line in file:
+                line = line.strip()
+                if line and '=' in line:
+                    key, value = line.split('=', 1)
+                    api_keys[key.strip()] = value.strip()
+            return api_keys
+    except FileNotFoundError:
+        print("Error: api_keys.txt file not found.")
+        return {}
+    except Exception as e:
+        print(f"Error reading API keys: {e}")
+        return {}
+        
 
 
 def call_api_function(url): #Kaz
