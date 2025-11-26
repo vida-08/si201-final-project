@@ -104,11 +104,8 @@ def call_weather_api(latitude, longitude, timestamp): #Kaz
         response = requests.get(url)
         response.raise_for_status()
         return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error calling Open-Meteo Archive API: {e}")
-        if hasattr(e, 'response') and e.response is not None:
-            print(f"Response status code: {e.response.status_code}")
-            print(f"Response text: {e.response.text}")
+    except:
+        print(f"Error calling Open-Meteo Archive API")
         return None
 
 
