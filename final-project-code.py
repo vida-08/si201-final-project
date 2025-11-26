@@ -91,7 +91,45 @@ def grab_location(latitude, longitude): #Kaz
     # Use the geocoding API to convert a latitude and longitude into a readable location name.
     # Inputs: latitude (float), longitude (float)
     # Outputs: location_name (string)
-    pass
+    
+    api_keys = get_api_keys()
+    api_key = api_keys.get('OPENWEATHER_API_KEY')
+    
+    if not api_key:
+        print("Error: OPENWEATHER_API_KEY not found in api_keys.txt")
+        return None
+    
+    url = f'http://api.openweathermap.org/geo/1.0/reverse?lat={latitude}&lon={longitude}&limit=1&appid={api_key}'
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        
+        if data and len(data) > 0:
+            location = data[0]
+            # Construct a readable location name from the response
+            # Response structure: [{"name": "City", "country": "GB", "state": "State", ...}]
+            name = location.get('name', '')
+            country = location.get('country', '')
+            
+            # Build location string: "City, Country"
+            if name and country:
+                location_name = f"{name}, {country}"
+            elif name:
+                location_name = name
+            elif country:
+                location_name = country
+            else:
+                location_name = "Unknown"
+            
+            return location_name
+        else:
+            print("No location found for the given coordinates")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error calling OpenWeather Geocoding API: {e}")
+        return None
 
 
 def convert_time_stamps(timestamps): #Vida
@@ -180,20 +218,30 @@ class TestCases(unittest.TestCase):
         self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
 
 if __name__ == '__main__':
+    # Test the geocoding API
+    print("Testing OpenWeather Geocoding API...")
+    latitude = 51.5098
+    longitude = 0.1180
+    location = grab_location(latitude, longitude)
+    
+    if location:
+        print(f"\nLocation for ({latitude}, {longitude}): {location}")
+    else:
+        print("Failed to retrieve location")
+    
+    print("\n" + "="*50 + "\n")
+    
     # Test the bird API
     print("Testing eBird API...")
     bird_data = call_bird_api("KZ")
     
     if bird_data:
-        print(f"\nSuccess! Retrieved {len(bird_data)} bird observations")
+        print(f"\nRetrieved {len(bird_data)} bird observations")
         print("\nFirst observation:")
         print(json.dumps(bird_data[0], indent=2))
     else:
         print("Failed to retrieve bird data")
     
-    
-
-
     # unittest.main(verbosity=2)
 
 
