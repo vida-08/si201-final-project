@@ -5,9 +5,9 @@
     # Student id: 20329072
     # Email: vidafan@umich.edu
 # Member 2
-    # Name:
-    # Student id:
-    # Email:
+    # Name: Kawani Mumtaz
+    # Student id: 8517 3732
+    # Email: kjmumtaz
 # Member 3
     # Name:
     # Student id:
