@@ -82,8 +82,33 @@ def call_bird_api(region_code="KZ"): #Kaz
         response = requests.get(url, headers=headers)
         response.raise_for_status()  # Raise an error for bad status codes
         return response.json()
+    except:
+        print(f"Error calling eBird API")
+        return None
+    
+def call_weather_api(latitude, longitude, timestamp): #Kaz
+    # Call the Open-Meteo Archive API to get historical weather data for a specific location and time
+    # Input: latitude (float), longitude (float), timestamp (int - Unix time)
+    # Output: A dictionary containing weather data, or None if error
+    # Note: Open-Meteo is free and doesn't require an API key
+    
+    # Convert Unix timestamp to date string (YYYY-MM-DD)
+    from datetime import datetime
+    dt = datetime.utcfromtimestamp(int(timestamp))
+    date_str = dt.strftime('%Y-%m-%d')
+    
+    # Open-Meteo
+    url = f'https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={date_str}&end_date={date_str}&daily=temperature_2m_mean,temperature_2m_max,temperature_2m_min&timezone=UTC'
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
     except requests.exceptions.RequestException as e:
-        print(f"Error calling eBird API: {e}")
+        print(f"Error calling Open-Meteo Archive API: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Response status code: {e.response.status_code}")
+            print(f"Response text: {e.response.text}")
         return None
 
 
@@ -127,8 +152,8 @@ def grab_location(latitude, longitude): #Kaz
         else:
             print("No location found for the given coordinates")
             return None
-    except requests.exceptions.RequestException as e:
-        print(f"Error calling OpenWeather Geocoding API: {e}")
+    except:
+        print(f"Error calling OpenWeather Geocoding API")
         return None
 
 
@@ -231,6 +256,24 @@ if __name__ == '__main__':
     
     print("\n" + "="*50 + "\n")
     
+    # Test the weather API
+    print("Testing OpenWeather Timemachine API...")
+    weather_lat = 39.099724
+    weather_lon = -94.578331
+    weather_dt = 1643803200
+    weather_data = call_weather_api(weather_lat, weather_lon, weather_dt)
+    
+    if weather_data:
+        print(f"\nRetrieved weather data for ({weather_lat}, {weather_lon}) at timestamp {weather_dt}")
+        print(f"\nWeather data keys: {list(weather_data.keys())}")
+        if 'data' in weather_data and len(weather_data['data']) > 0:
+            print(f"\nFirst data point:")
+            print(json.dumps(weather_data['data'][0], indent=2))
+    else:
+        print("Failed to retrieve weather data")
+    
+    print("\n" + "="*50 + "\n")
+    
     # Test the bird API
     print("Testing eBird API...")
     bird_data = call_bird_api("KZ")
@@ -242,6 +285,7 @@ if __name__ == '__main__':
     else:
         print("Failed to retrieve bird data")
     
+    # Uncomment to run unit tests instead
     # unittest.main(verbosity=2)
 
 
