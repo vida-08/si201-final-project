@@ -28,8 +28,10 @@ def get_api_keys(): #Kaz
     # Read API keys from a file named 'api_keys.txt'
     # Format:
     # BIRD_API_KEY=your_bird_api_key
-    # WEATHER_API_KEY=your_weather_api_key
-    # GEOCODING_API_KEY=your_geocoding_api_key
+    # OPENWEATHER_API_KEY=your_weather_api_key
+    
+    # Make a file named 'api_keys.txt' in the same directory as this code file before running.
+    # It wont sync to the git so its safe.
 
     try:
         with open('api_keys.txt', 'r') as file:
@@ -54,6 +56,31 @@ def call_api_function(url): #Kaz
     # Input: url needed for authentication (string)
     # Output: A dictionary containing the raw API responses
     pass
+
+def call_bird_api(region_code="KZ"): #Kaz
+    # Call the eBird API to get recent bird observations for a specific region
+    # Input: region_code (string) - default is "KZ" for Kazakhstan
+    # Output: A list of dictionaries containing bird observation data, or None if error
+    
+    api_keys = get_api_keys()
+    api_token = api_keys.get('BIRD_API_KEY')
+    
+    if not api_token:
+        print("Error: BIRD_API_KEY not found in api_keys.txt")
+        return None
+    
+    url = f'https://api.ebird.org/v2/data/obs/{region_code}/recent'
+    headers = {
+        'X-eBirdApiToken': api_token
+    }
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raise an error for bad status codes
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error calling eBird API: {e}")
+        return None
 
 
 def grab_location(latitude, longitude): #Kaz
