@@ -18,7 +18,10 @@ import json
 import requests
 import re
 import unittest
+import os
 from datetime import datetime, timezone
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 def get_api_keys(): #Kaz
     # Hide API keys for security purposes. (like in HW)
@@ -34,7 +37,8 @@ def get_api_keys(): #Kaz
     # It wont sync to the git so its safe.
 
     try:
-        with open('api_keys.txt', 'r') as file:
+        api_keys_path = os.path.join(BASE_DIR, 'api_keys.txt')
+        with open(api_keys_path, 'r') as file:
             api_keys = {}
             for line in file:
                 line = line.strip()
@@ -43,7 +47,7 @@ def get_api_keys(): #Kaz
                     api_keys[key.strip()] = value.strip()
             return api_keys
     except FileNotFoundError:
-        print("Error: api_keys.txt file not found.")
+        print(f"Error: api_keys.txt file not found at {api_keys_path}")
         return {}
     except Exception as e:
         print(f"Error reading API keys: {e}")
@@ -176,6 +180,18 @@ class TestCases(unittest.TestCase):
         self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
 
 if __name__ == '__main__':
-    # main()
-    unittest.main(verbosity=2)
+    # Test the bird API
+    print("Testing eBird API...")
+    bird_data = call_bird_api("KZ")
+    
+    if bird_data:
+        print(f"\nSuccess! Retrieved {len(bird_data)} bird observations")
+        print("\nFirst observation:")
+        print(json.dumps(bird_data[0], indent=2))
+    else:
+        print("Failed to retrieve bird data")
+    
+    # Uncomment to run unit tests instead
+    # unittest.main(verbosity=2)
+
 
