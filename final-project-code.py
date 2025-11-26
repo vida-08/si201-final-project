@@ -191,7 +191,9 @@ if __name__ == '__main__':
     else:
         print("Failed to retrieve bird data")
     
-    # Uncomment to run unit tests instead
+    
+
+
     # unittest.main(verbosity=2)
 
 
