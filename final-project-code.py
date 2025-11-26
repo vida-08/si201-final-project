@@ -20,7 +20,7 @@ import re
 import unittest
 from datetime import datetime, timezone
 
-def hide_api_keys(): #Kaz
+def get_api_keys(): #Kaz
     # Hide API keys for security purposes. (like in HW)
     # Input: None
     # Output: A file or dictionary containing hidden API keys
