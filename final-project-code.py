@@ -20,6 +20,7 @@ import re
 import unittest
 import os
 from datetime import datetime, timezone
+import sqlite3
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -53,13 +54,6 @@ def get_api_keys(): #Kaz
         print(f"Error reading API keys: {e}")
         return {}
         
-
-
-def call_api_function(url): #Kaz
-    # Send requests to all APIs (birds, weather, geocoding)
-    # Input: url needed for authentication (string)
-    # Output: A dictionary containing the raw API responses
-    pass
 
 def call_bird_api(region_code="KZ"): #Kaz
     # Call the eBird API to get recent bird observations for a specific region
@@ -170,11 +164,38 @@ def convert_time_stamps(timestamps): #Vida
         return None
     pass
 
+def clean_bird_data(raw_bird_data): #Vida
+    # Clean and process raw bird observation data from the API.
+    # Inputs: raw data from API
+    # Outputs: cleaned/processed data ready for database insertion
+    cleaned_data = []
+    
 
 def create_bird_database(bird_data): #Vida
     # Create SQLite database tables to store cleaned API data.
     # Inputs: processed/cleaned data from API
     # Outputs: database connections or paths
+    conn = sqlite3.connect("bird_observations.db")
+    cur = conn.cursor()
+    cur.execute(""" 
+        CREATE TABLE IF NOT EXISTS bird_observations (
+        id INTEGER PRIMARY KEY,
+        species_code TEXT,
+        com_name TEXT,
+        sci_name TEXT,
+        loc_id TEXT,
+        location TEXT,
+        lattitude REAL,
+        longitude REAL,
+        obs_dt TEXT,
+        obs_unix_timestamp REAL,
+        how_many INTEGER,
+        sub_id TEXT
+        )
+    """)
+    for obs in bird_data:
+
+
     pass
 
 
