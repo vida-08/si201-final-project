@@ -9,9 +9,9 @@
     # Student id: 8517 3732
     # Email: kjmumtaz
 # Member 3
-    # Name:
-    # Student id:
-    # Email:
+    # Name: Mizuki Kuno
+    # Student id:78832653
+    # Email: mizuki@umich.edu
 
 
 import json
@@ -237,6 +237,57 @@ def create_weather_database(weather_data): #Mizuki
     # Create SQLite database tables to store cleaned API data.
     # Inputs: processed/cleaned data from API
     # Outputs: database connections or paths
+    db_path = os.path.join(BASE_DIR, db_name)
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    
+    # Create weather table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS weather_data (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            latitude REAL,
+            longitude REAL,
+            date TEXT,
+            temperature_mean REAL,
+            temperature_max REAL,
+            temperature_min REAL,
+            unix_timestamp REAL
+        )
+    """)
+    
+    # Insert weather data if provided
+    if weather_data:
+        for weather in weather_data:
+            # Check if this record already exists (avoid duplicates)
+            cur.execute("""
+                SELECT id FROM weather_data 
+                WHERE latitude = ? AND longitude = ? AND date = ?
+            """, (
+                weather.get('latitude'),
+                weather.get('longitude'),
+                weather.get('date')
+            ))
+            
+            if cur.fetchone() is None:
+                cur.execute("""
+                    INSERT INTO weather_data 
+                    (latitude, longitude, date, temperature_mean, temperature_max, 
+                     temperature_min, unix_timestamp)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    weather.get('latitude'),
+                    weather.get('longitude'),
+                    weather.get('date'),
+                    weather.get('temperature_mean'),
+                    weather.get('temperature_max'),
+                    weather.get('temperature_min'),
+                    weather.get('unix_timestamp')
+                ))
+    
+    conn.commit()
+    conn.close()
+    
+    return db_path
     pass
 
 
