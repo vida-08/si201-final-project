@@ -168,33 +168,67 @@ def clean_bird_data(raw_bird_data): #Vida
     # Clean and process raw bird observation data from the API.
     # Inputs: raw data from API
     # Outputs: cleaned/processed data ready for database insertion
-    cleaned_data = []
+    if not raw_bird_data:
+        return []
+
+    cleaned = []
+
+    for obs in raw_bird_data:
+        unix_time = convert_time_stamps(obs.get("obsDt"))
+
+        lat = obs.get("lat")
+        lng = obs.get("lng")
+
+        # Reverse geocoding
+        location_name = None
+        if lat is not None and lng is not None:
+            location_name = grab_location(lat, lng)
+
+        cleaned.append({
+            "speciesCode": obs.get("speciesCode"),
+            "comName": obs.get("comName"),
+            "sciName": obs.get("sciName"),
+            "locId": obs.get("locId"),
+            "locName": obs.get("locName"),
+            "loc_standardized": location_name,
+            "latitude": lat,
+            "longitude": lng,
+            "obsDt": obs.get("obsDt"),
+            "unix_time": unix_time,
+            "howMany": obs.get("howMany"),
+            "subId": obs.get("subId"),
+        })
+
+    return cleaned
+
     
 
-def create_bird_database(bird_data): #Vida
+def create_bird_database(cleaned_bird_data, db_name="bird_observations.db"): #Vida
     # Create SQLite database tables to store cleaned API data.
     # Inputs: processed/cleaned data from API
     # Outputs: database connections or paths
-    conn = sqlite3.connect("bird_observations.db")
-    cur = conn.cursor()
-    cur.execute(""" 
-        CREATE TABLE IF NOT EXISTS bird_observations (
-        id INTEGER PRIMARY KEY,
-        species_code TEXT,
-        com_name TEXT,
-        sci_name TEXT,
-        loc_id TEXT,
-        location TEXT,
-        lattitude REAL,
-        longitude REAL,
-        obs_dt TEXT,
-        obs_unix_timestamp REAL,
-        how_many INTEGER,
-        sub_id TEXT
-        )
-    """)
-    for obs in bird_data:
 
+    # conn = sqlite3.connect(db_name)
+    # cur = conn.cursor()
+    # cur.execute(""" 
+    #     CREATE TABLE IF NOT EXISTS bird_observations (
+    #     id INTEGER PRIMARY KEY,
+    #     species_code TEXT,
+    #     com_name TEXT,
+    #     sci_name TEXT,
+    #     loc_id TEXT,
+    #     raw_location TEXT,
+    #     standardized_location TEXT,
+    #     lattitude REAL,
+    #     longitude REAL,
+    #     obs_dt TEXT,
+    #     obs_unix_timestamp REAL,
+    #     how_many INTEGER,
+    #     sub_id TEXT
+    #     )
+    # """)
+
+    # for obs in bird_data:
 
     pass
 
@@ -254,11 +288,58 @@ def main(): #Kaz
 # Debugging/testing area for any code
 class TestCases(unittest.TestCase):
     # for testing convert_time_stamps function
-    def test_convert_time_stamps(self):
-        self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
-        self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
-        self.assertEqual(convert_time_stamps(""), None)
-        self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
+    # def test_convert_time_stamps(self):
+    #     self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
+    #     self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
+    #     self.assertEqual(convert_time_stamps(""), None)
+    #     self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
+
+    # test clean bird data
+    def setUp(self):
+        # Mock two functions to avoid calling API
+        global grab_location
+        global convert_time_stamps
+
+        grab_location = lambda lat, lng: "Mock City, Mock Country"
+        convert_time_stamps = lambda ts: 1234567890
+
+    def test_clean_bird_data(self):
+        sample_raw_data = [{
+            "speciesCode": "whteag",
+            "comName": "White-tailed Eagle",
+            "sciName": "Haliaeetus albicilla",
+            "locId": "L30327233",
+            "locName": "Ural River",
+            "obsDt": "2025-11-27 14:30",
+            "howMany": 2,
+            "lat": 51.1768,
+            "lng": 51.3807,
+            "subId": "S286343282"
+        }]
+
+        cleaned = clean_bird_data(sample_raw_data)
+
+        self.assertIsInstance(cleaned, list)
+        self.assertEqual(len(cleaned), 1)
+
+        bird = cleaned[0]
+
+        self.assertIn("speciesCode", bird)
+        self.assertIn("comName", bird)
+        self.assertIn("sciName", bird)
+        self.assertIn("latitude", bird)
+        self.assertIn("longitude", bird)
+        self.assertIn("obsDt", bird)
+        self.assertIn("unix_time", bird)
+        self.assertIn("loc_standardized", bird)
+
+        self.assertEqual(bird["speciesCode"], "whteag")
+        self.assertEqual(bird["howMany"], 2)
+        self.assertEqual(bird["locName"], "Ural River")
+
+        self.assertAlmostEqual(bird["latitude"], 51.1768)
+        self.assertAlmostEqual(bird["longitude"], 51.3807)
+
 
 if __name__ == '__main__':
     # Test the geocoding API
@@ -304,6 +385,6 @@ if __name__ == '__main__':
         print("Failed to retrieve bird data")
     
     # Uncomment to run unit tests instead
-    # unittest.main(verbosity=2)
+    unittest.main(verbosity=2)
 
 
