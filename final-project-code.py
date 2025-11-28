@@ -331,11 +331,11 @@ def load_until_target(region="US", target=120):
     pass
 
 
-def create_weather_database(weather_data): #Mizuki
-    # Create SQLite database tables to store cleaned API data.
+def create_weather_table(weather_data): #Mizuki
+    # Create table in the main database.
     # Inputs: processed/cleaned data from API
     # Outputs: database connections or paths
-    db_path = os.path.join(BASE_DIR, db_name)
+    db_path = os.path.join(BASE_DIR, DB_NAME)
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     
@@ -389,8 +389,8 @@ def create_weather_database(weather_data): #Mizuki
     pass
 
 
-def create_land_water_database(land_water_data): #Kaz
-    # Create SQLite database tables to store cleaned API data.
+def create_land_water_table(land_water_data): #Kaz
+    # Create table in the main database
     # Inputs: processed/cleaned data from API
     # Outputs: database connections or paths
     pass
