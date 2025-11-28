@@ -23,6 +23,7 @@ from datetime import datetime, timezone
 import sqlite3
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+DB_NAME = os.path.join(BASE_DIR, "final_project.db")
 
 def get_api_keys(): #Kaz
     # Hide API keys for security purposes. (like in HW)
@@ -164,71 +165,168 @@ def convert_time_stamps(timestamps): #Vida
         return None
     pass
 
-def clean_bird_data(raw_bird_data): #Vida
-    # Clean and process raw bird observation data from the API.
-    # Inputs: raw data from API
-    # Outputs: cleaned/processed data ready for database insertion
-    if not raw_bird_data:
-        return []
+# def clean_bird_data(raw_bird_data): #Vida
+#     # Clean and process raw bird observation data from the API.
+#     # Inputs: raw data from API
+#     # Outputs: cleaned/processed data ready for database insertion
+#     if not raw_bird_data:
+#         return []
 
-    cleaned = []
+#     cleaned = []
 
-    for obs in raw_bird_data:
-        unix_time = convert_time_stamps(obs.get("obsDt"))
+#     for obs in raw_bird_data:
+#         unix_time = convert_time_stamps(obs.get("obsDt"))
 
-        lat = obs.get("lat")
-        lng = obs.get("lng")
+#         lat = obs.get("lat")
+#         lng = obs.get("lng")
 
-        # Reverse geocoding
-        location_name = None
-        if lat is not None and lng is not None:
-            location_name = grab_location(lat, lng)
+#         # Reverse geocoding
+#         location_name = None
+#         if lat is not None and lng is not None:
+#             location_name = grab_location(lat, lng)
 
-        cleaned.append({
-            "speciesCode": obs.get("speciesCode"),
-            "comName": obs.get("comName"),
-            "sciName": obs.get("sciName"),
-            "locId": obs.get("locId"),
-            "locName": obs.get("locName"),
-            "loc_standardized": location_name,
-            "latitude": lat,
-            "longitude": lng,
-            "obsDt": obs.get("obsDt"),
-            "unix_time": unix_time,
-            "howMany": obs.get("howMany"),
-            "subId": obs.get("subId"),
-        })
+#         cleaned.append({
+#             "speciesCode": obs.get("speciesCode"),
+#             "comName": obs.get("comName"),
+#             "sciName": obs.get("sciName"),
+#             "locId": obs.get("locId"),
+#             "locName": obs.get("locName"),
+#             "loc_standardized": location_name,
+#             "latitude": lat,
+#             "longitude": lng,
+#             "obsDt": obs.get("obsDt"),
+#             "unix_time": unix_time,
+#             "howMany": obs.get("howMany"),
+#             "subId": obs.get("subId"),
+#         })
 
-    return cleaned
+#     return cleaned
 
     
 
-def create_bird_database(cleaned_bird_data, db_name="bird_observations.db"): #Vida
+def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #Vida
     # Create SQLite database tables to store cleaned API data.
     # Inputs: processed/cleaned data from API
     # Outputs: database connections or paths
 
-    # conn = sqlite3.connect(db_name)
-    # cur = conn.cursor()
-    # cur.execute(""" 
-    #     CREATE TABLE IF NOT EXISTS bird_observations (
-    #     id INTEGER PRIMARY KEY,
-    #     species_code TEXT,
-    #     com_name TEXT,
-    #     sci_name TEXT,
-    #     loc_id TEXT,
-    #     raw_location TEXT,
-    #     standardized_location TEXT,
-    #     lattitude REAL,
-    #     longitude REAL,
-    #     obs_dt TEXT,
-    #     obs_unix_timestamp REAL,
-    #     how_many INTEGER,
-    #     sub_id TEXT
-    #     )
-    # """)
+    # Stores cleaned bird data in a database in a rubric-compliant way:
+    # Inserts NO MORE THAN 25 new items per run.
+    # Prevents duplicate rows using unique constraints + OR IGNORE.
+    # Creates 2 tables that share an integer key:
+    #     1. locations (id INTEGER PRIMARY KEY, name TEXT UNIQUE, lat, lon)
+    #     2. bird_observations (references locations.id)
+    # Only process the first N rows (required by rubric)
+    conn = sqlite3.connect(db_name)
+    cur = conn.cursor()
 
-    # for obs in bird_data:
+    # TABLE 1: LOCATIONS
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS locations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            loc_name TEXT,
+            latitude REAL,
+            longitude REAL,
+            UNIQUE(latitude, longitude)
+        )
+    """)
+
+    # TABLE 2: BIRD OBSERVATIONS
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS bird_observations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            species_code TEXT,
+            com_name TEXT,
+            sci_name TEXT,
+            location_id INTEGER,
+            obs_dt TEXT,
+            obs_unix_timestamp REAL,
+            how_many INTEGER,
+            sub_id TEXT,
+            UNIQUE(species_code, obs_dt, location_id),
+            FOREIGN KEY(location_id) REFERENCES locations(id)
+        )
+    """)
+
+    inserted = 0
+
+    for obs in raw_bird_data:
+
+        if inserted >= max_rows_per_run:
+            break
+
+        raw_loc = obs.get("locName")
+        lat = obs.get("lat")
+        lon = obs.get("lng")
+        obs_dt = obs.get("obsDt")
+        unix_ts = convert_time_stamps(obs_dt)
+
+        if lat is None or lon is None:
+            continue
+
+        # Insert location
+        cur.execute("""
+        INSERT OR IGNORE INTO locations (loc_name, latitude, longitude)
+        VALUES (?, ?, ?)
+        """, (raw_loc, lat, lon))
+
+        # Retrieve location_id
+        cur.execute("""
+            SELECT id FROM locations
+            WHERE latitude = ? AND longitude = ?
+        """, (lat, lon))
+        row = cur.fetchone()
+        if not row:
+            continue
+        location_id = row[0]
+
+        # Insert bird observation
+        cur.execute("""
+            INSERT OR IGNORE INTO bird_observations (
+                species_code, com_name, sci_name,
+                location_id, obs_dt, obs_unix_timestamp,
+                how_many, sub_id
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            obs.get("speciesCode"),
+            obs.get("comName"),
+            obs.get("sciName"),
+            location_id,
+            obs_dt,
+            unix_ts,
+            obs.get("howMany"),
+            obs.get("subId")
+        ))
+
+        if cur.rowcount > 0:
+            inserted += 1
+
+    conn.commit()
+    conn.close()
+    return db_name
+    pass
+
+def count_location_rows(db_name=DB_NAME):
+    conn = sqlite3.connect(db_name)
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM locations")
+    count = cur.fetchone()[0]
+    conn.close()
+    return count
+
+def load_until_target(region="KZ", target=120):
+    while True:
+        current = count_location_rows()
+        print(f"Current rows in locations table: {current}")
+
+        if current >= target:
+            print(f"Reached {target} unique locations! Stopping.")
+            break
+
+        print("Fetching new bird observations from eBird...")
+        raw = call_bird_api(region)
+        create_bird_database(raw)
 
     pass
 
@@ -339,57 +437,11 @@ def main(): #Kaz
 # Debugging/testing area for any code
 class TestCases(unittest.TestCase):
     # for testing convert_time_stamps function
-    # def test_convert_time_stamps(self):
-    #     self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
-    #     self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
-    #     self.assertEqual(convert_time_stamps(""), None)
-    #     self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
-
-    # test clean bird data
-    def setUp(self):
-        # Mock two functions to avoid calling API
-        global grab_location
-        global convert_time_stamps
-
-        grab_location = lambda lat, lng: "Mock City, Mock Country"
-        convert_time_stamps = lambda ts: 1234567890
-
-    def test_clean_bird_data(self):
-        sample_raw_data = [{
-            "speciesCode": "whteag",
-            "comName": "White-tailed Eagle",
-            "sciName": "Haliaeetus albicilla",
-            "locId": "L30327233",
-            "locName": "Ural River",
-            "obsDt": "2025-11-27 14:30",
-            "howMany": 2,
-            "lat": 51.1768,
-            "lng": 51.3807,
-            "subId": "S286343282"
-        }]
-
-        cleaned = clean_bird_data(sample_raw_data)
-
-        self.assertIsInstance(cleaned, list)
-        self.assertEqual(len(cleaned), 1)
-
-        bird = cleaned[0]
-
-        self.assertIn("speciesCode", bird)
-        self.assertIn("comName", bird)
-        self.assertIn("sciName", bird)
-        self.assertIn("latitude", bird)
-        self.assertIn("longitude", bird)
-        self.assertIn("obsDt", bird)
-        self.assertIn("unix_time", bird)
-        self.assertIn("loc_standardized", bird)
-
-        self.assertEqual(bird["speciesCode"], "whteag")
-        self.assertEqual(bird["howMany"], 2)
-        self.assertEqual(bird["locName"], "Ural River")
-
-        self.assertAlmostEqual(bird["latitude"], 51.1768)
-        self.assertAlmostEqual(bird["longitude"], 51.3807)
+    def test_convert_time_stamps(self):
+        self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
+        self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
+        self.assertEqual(convert_time_stamps(""), None)
+        self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
 
 
 if __name__ == '__main__':
@@ -435,7 +487,43 @@ if __name__ == '__main__':
     else:
         print("Failed to retrieve bird data")
     
+    
+    print("\nCreating database...")
+    db_path = create_bird_database(bird_data)
+
+    if db_path:
+        print(f"Database created successfully at: {db_path}")
+    else:
+        print("Failed to create bird database")
+
+    # Additional check: count rows to confirm insertion
+    try:
+        conn = sqlite3.connect(db_path)
+        cur = conn.cursor()
+
+        # Count rows in locations table
+        cur.execute("SELECT COUNT(*) FROM locations")
+        loc_count = cur.fetchone()[0]
+
+        # Count rows in bird_observations table
+        cur.execute("SELECT COUNT(*) FROM bird_observations")
+        obs_count = cur.fetchone()[0]
+
+        print(f"\nDatabase check:")
+        print(f"-Locations table contains: {loc_count} rows")
+        print(f"-Bird observations table contains: {obs_count} rows")
+
+        conn.close()
+
+    except Exception as e:
+        print(f"Error verifying database: {e}")
+    
+    # loop until we have 120 rows for location table)
+    print("Loading bird data until 120 unique locations are reached...")
+    load_until_target(region="KZ", target=120)
+    print("Done!")
+    
     # Uncomment to run unit tests instead
-    unittest.main(verbosity=2)
+    # unittest.main(verbosity=2)
 
 
