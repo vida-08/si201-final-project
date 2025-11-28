@@ -315,7 +315,7 @@ def count_location_rows(db_name=DB_NAME):
     conn.close()
     return count
 
-def load_until_target(region="KZ", target=120):
+def load_until_target(region="US", target=120):
     while True:
         current = count_location_rows()
         print(f"Current rows in locations table: {current}")
@@ -478,7 +478,7 @@ if __name__ == '__main__':
     
     # Test the bird API
     print("Testing eBird API...")
-    bird_data = call_bird_api("KZ")
+    bird_data = call_bird_api("US")
     
     if bird_data:
         print(f"\nRetrieved {len(bird_data)} bird observations")
@@ -520,7 +520,7 @@ if __name__ == '__main__':
     
     # loop until we have 120 rows for location table)
     print("Loading bird data until 120 unique locations are reached...")
-    load_until_target(region="KZ", target=120)
+    load_until_target(region="US", target=120)
     print("Done!")
     
     # Uncomment to run unit tests instead
