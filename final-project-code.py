@@ -128,7 +128,7 @@ def grab_location(latitude, longitude): #Kaz
             # Construct a readable location name from the response
             # Response structure: [{"name": "City", "country": "GB", "state": "State", ...}]
             name = location.get('name', '')
-            country = location.get('country', '')
+            country = location.get('country', '')   
             
             # Build location string: "City, Country"
             if name and country:
@@ -223,10 +223,9 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
     cur.execute("""
         CREATE TABLE IF NOT EXISTS locations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            loc_name TEXT,
+            loc_name TEXT UNIQUE,
             latitude REAL,
-            longitude REAL,
-            UNIQUE(latitude, longitude)
+            longitude REAL
         )
     """)
 
@@ -254,7 +253,6 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
         if inserted >= max_rows_per_run:
             break
 
-        raw_loc = obs.get("locName")
         lat = obs.get("lat")
         lon = obs.get("lng")
         obs_dt = obs.get("obsDt")
@@ -263,17 +261,23 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
         if lat is None or lon is None:
             continue
 
-        # Insert location
+        # Get location name from coordinates using grab_location
+        loc_name = grab_location(lat, lon)
+        
+        if not loc_name:
+            continue
+
+        # Insert location (will be ignored if loc_name already exists)
         cur.execute("""
         INSERT OR IGNORE INTO locations (loc_name, latitude, longitude)
         VALUES (?, ?, ?)
-        """, (raw_loc, lat, lon))
+        """, (loc_name, lat, lon))
 
-        # Retrieve location_id
+        # Retrieve location_id by loc_name
         cur.execute("""
             SELECT id FROM locations
-            WHERE latitude = ? AND longitude = ?
-        """, (lat, lon))
+            WHERE loc_name = ?
+        """, (loc_name,))
         row = cur.fetchone()
         if not row:
             continue
