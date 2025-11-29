@@ -84,7 +84,7 @@ def call_bird_api(region_code="KZ"): #Kaz
 def call_weather_api(latitude, longitude, timestamp): #Kaz
     # Call the Open-Meteo Archive API to get historical weather data for a specific location and time
     # Input: latitude (float), longitude (float), timestamp (int - Unix time)
-    # Output: A dictionary containing weather data, or None if error
+    # Output: A dictionary containing formatted weather data, or None if error
     # Note: Open-Meteo is free and doesn't require an API key
     
     # Convert Unix timestamp to date string (YYYY-MM-DD)
@@ -92,13 +92,31 @@ def call_weather_api(latitude, longitude, timestamp): #Kaz
     dt = datetime.utcfromtimestamp(int(timestamp))
     date_str = dt.strftime('%Y-%m-%d')
     
-    # Open-Meteo
-    url = f'https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={date_str}&end_date={date_str}&daily=temperature_2m_mean,temperature_2m_max,temperature_2m_min&timezone=UTC'
+    # Open-Meteo Archive API URL (no timezone parameter, uses GMT by default)
+    url = f'https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={date_str}&end_date={date_str}&daily=temperature_2m_mean,temperature_2m_max,temperature_2m_min'
     
     try:
         response = requests.get(url)
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        
+        # Extract data from the response
+        if 'daily' in data and data['daily']:
+            daily = data['daily']
+            
+            # Return formatted dictionary
+            return {
+                'latitude': latitude,
+                'longitude': longitude,
+                'date': date_str,
+                'temperature_mean': daily['temperature_2m_mean'][0] if daily.get('temperature_2m_mean') else None,
+                'temperature_max': daily['temperature_2m_max'][0] if daily.get('temperature_2m_max') else None,
+                'temperature_min': daily['temperature_2m_min'][0] if daily.get('temperature_2m_min') else None,
+                'unix_timestamp': timestamp
+            }
+        else:
+            print(f"No weather data found in API response")
+            return None
     except:
         print(f"Error calling Open-Meteo Archive API")
         return None
@@ -311,10 +329,10 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
     return db_name
     pass
 
-def count_location_rows(db_name=DB_NAME):
+def count_location_rows(db_name=DB_NAME, table_name="locations"):
     conn = sqlite3.connect(db_name)
     cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM locations")
+    cur.execute(f"SELECT COUNT(*) FROM {table_name}")
     count = cur.fetchone()[0]
     conn.close()
     return count
@@ -332,6 +350,10 @@ def load_until_target(region="US", target=120):
         raw = call_bird_api(region)
         create_bird_database(raw)
 
+    pass
+
+def weather_until_target(target=120):
+    
     pass
 
 
