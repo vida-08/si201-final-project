@@ -167,6 +167,29 @@ def grab_location(latitude, longitude): #Kaz
         return None
 
 
+def grab_koeppen(latitude, longitude): #Kaz
+    
+    url = f'http://climateapi.scottpinkelman.com/api/v1/location/{latitude}/{longitude}'
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        
+        if data and 'return_values' in data and len(data['return_values']) > 0:
+            climate_data = data['return_values'][0]
+            
+            return {
+                'koeppen_zone': climate_data.get('koppen_geiger_zone'),
+                'zone_description': climate_data.get('zone_description')
+            }
+        else:
+            print(f"No Koepp data found for coordinates ({latitude}, {longitude})")
+            return None
+    except:
+        print(f"Error calling Koeppen Climate API")
+        return None
+
 def convert_time_stamps(timestamps): #Vida
     # Converts ONE timestamp at a time, and the Bird cleaning function loops through all records and converts each individually
     # No need for lists or dictionaries in the converter itself, I feel that will be less buggy
@@ -243,7 +266,9 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             loc_name TEXT UNIQUE,
             latitude REAL,
-            longitude REAL
+            longitude REAL,
+            koeppen_geiger_zone TEXT,
+            zone_description TEXT
         )
     """)
 
@@ -284,12 +309,17 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
         
         if not loc_name:
             continue
+        
+        # Get Köppen-Geiger climate data
+        koeppen_data = grab_koeppen(lat, lon)
+        koeppen_zone = koeppen_data.get('koeppen_zone') if koeppen_data else None
+        zone_desc = koeppen_data.get('zone_description') if koeppen_data else None
 
         # Insert location (will be ignored if loc_name already exists)
         cur.execute("""
-        INSERT OR IGNORE INTO locations (loc_name, latitude, longitude)
-        VALUES (?, ?, ?)
-        """, (loc_name, lat, lon))
+        INSERT OR IGNORE INTO locations (loc_name, latitude, longitude, koeppen_geiger_zone, zone_description)
+        VALUES (?, ?, ?, ?, ?)
+        """, (loc_name, lat, lon, koeppen_zone, zone_desc))
 
         # Retrieve location_id by loc_name
         cur.execute("""
@@ -484,13 +514,6 @@ def create_weather_table(weather_data): #Mizuki
     conn.close()
     
     return db_path
-    pass
-
-
-def create_land_water_table(land_water_data): #Kaz
-    # Create table in the main database
-    # Inputs: processed/cleaned data from API
-    # Outputs: database connections or paths
     pass
 
 
