@@ -352,30 +352,105 @@ def load_until_target(region="US", target=120):
 
     pass
 
-def weather_until_target(target=120):
+def weather_until_complete(db_name=DB_NAME, max_rows_per_run=20):
+    # Fetch weather data for all bird observations incrementally
+    # Processes up to max_rows_per_run observations at a time until all have weather data
     
+    conn = sqlite3.connect(db_name)
+    cur = conn.cursor()
+    
+    while True:
+        # Count total bird observations
+        cur.execute("SELECT COUNT(*) FROM bird_observations")
+        total_observations = cur.fetchone()[0]
+        
+        # Count how many already have weather data (check if table exists first)
+        try:
+            cur.execute("SELECT COUNT(*) FROM weather_data")
+            completed_weather = cur.fetchone()[0]
+        except sqlite3.OperationalError:
+            # Table doesn't exist yet
+            completed_weather = 0
+        
+        print(f"Weather data progress: {completed_weather}/{total_observations} observations")
+        
+        if completed_weather >= total_observations:
+            print("All bird observations have weather data")
+            break
+        
+        # Get bird observations that don't have weather data yet (up to max_rows_per_run)
+        try:
+            cur.execute("""
+                SELECT bo.id, l.latitude, l.longitude, bo.obs_unix_timestamp
+                FROM bird_observations bo
+                JOIN locations l ON bo.location_id = l.id
+                WHERE bo.id NOT IN (SELECT bird_observation_id FROM weather_data)
+                LIMIT ?
+            """, (max_rows_per_run,))
+        except:
+            # If weather_data table doesn't exist, select all bird observations
+            cur.execute("""
+                SELECT bo.id, l.latitude, l.longitude, bo.obs_unix_timestamp
+                FROM bird_observations bo
+                JOIN locations l ON bo.location_id = l.id
+                LIMIT ?
+            """, (max_rows_per_run,))
+        
+        observations_to_process = cur.fetchall()
+        
+        if not observations_to_process:
+            print("No more observations to process")
+            break
+        
+        # Build list of weather data dictionaries
+        weather_data_list = []
+        
+        for obs_id, lat, lon, timestamp in observations_to_process:
+            if timestamp is None:
+                print(f"Skipping observation {obs_id} - no timestamp")
+                continue
+            
+            weather_dict = call_weather_api(lat, lon, timestamp)
+            
+            if weather_dict:
+                # Add the bird_observation_id to link the weather data
+                weather_dict['bird_observation_id'] = obs_id
+                weather_data_list.append(weather_dict)
+            else:
+                print(f"Failed to get weather data for observation {obs_id}")
+        
+        # Insert weather data into the database
+        if weather_data_list:
+            create_weather_table(weather_data_list)
+            print(f"Added weather data for {len(weather_data_list)} observations")
+        else:
+            print("No valid weather data to add")
+            break
+    
+    conn.close()
     pass
 
 
 def create_weather_table(weather_data): #Mizuki
     # Create table in the main database.
-    # Inputs: processed/cleaned data from API
+    # Inputs: processed/cleaned data from API (list of dicts with bird_observation_id)
     # Outputs: database connections or paths
     db_path = os.path.join(BASE_DIR, DB_NAME)
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     
-    # Create weather table
+    # Create weather table with foreign key to bird_observations
     cur.execute("""
         CREATE TABLE IF NOT EXISTS weather_data (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bird_observation_id INTEGER PRIMARY KEY,
             latitude REAL,
             longitude REAL,
             date TEXT,
             temperature_mean REAL,
             temperature_max REAL,
             temperature_min REAL,
-            unix_timestamp REAL
+            unix_timestamp REAL,
+            FOREIGN KEY(bird_observation_id) REFERENCES bird_observations(id)
         )
     """)
     
@@ -384,21 +459,18 @@ def create_weather_table(weather_data): #Mizuki
         for weather in weather_data:
             # Check if this record already exists (avoid duplicates)
             cur.execute("""
-                SELECT id FROM weather_data 
-                WHERE latitude = ? AND longitude = ? AND date = ?
-            """, (
-                weather.get('latitude'),
-                weather.get('longitude'),
-                weather.get('date')
-            ))
+                SELECT bird_observation_id FROM weather_data 
+                WHERE bird_observation_id = ?
+            """, (weather.get('bird_observation_id'),))
             
             if cur.fetchone() is None:
                 cur.execute("""
                     INSERT INTO weather_data 
-                    (latitude, longitude, date, temperature_mean, temperature_max, 
-                     temperature_min, unix_timestamp)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    (bird_observation_id, latitude, longitude, date, temperature_mean, 
+                     temperature_max, temperature_min, unix_timestamp)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
+                    weather.get('bird_observation_id'),
                     weather.get('latitude'),
                     weather.get('longitude'),
                     weather.get('date'),
@@ -471,48 +543,8 @@ class TestCases(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # Test the geocoding API
-    print("Testing OpenWeather Geocoding API...")
-    latitude = 51.5098
-    longitude = 0.1180
-    location = grab_location(latitude, longitude)
     
-    if location:
-        print(f"\nLocation for ({latitude}, {longitude}): {location}")
-    else:
-        print("Failed to retrieve location")
-    
-    print("\n" + "="*50 + "\n")
-    
-    # Test the weather API
-    print("Testing OpenWeather Timemachine API...")
-    weather_lat = 39.099724
-    weather_lon = -94.578331
-    weather_dt = 1643803200
-    weather_data = call_weather_api(weather_lat, weather_lon, weather_dt)
-    
-    if weather_data:
-        print(f"\nRetrieved weather data for ({weather_lat}, {weather_lon}) at timestamp {weather_dt}")
-        print(f"\nWeather data keys: {list(weather_data.keys())}")
-        if 'data' in weather_data and len(weather_data['data']) > 0:
-            print(f"\nFirst data point:")
-            print(json.dumps(weather_data['data'][0], indent=2))
-    else:
-        print("Failed to retrieve weather data")
-    
-    print("\n" + "="*50 + "\n")
-    
-    # Test the bird API
-    print("Testing eBird API...")
     bird_data = call_bird_api("US")
-    
-    if bird_data:
-        print(f"\nRetrieved {len(bird_data)} bird observations")
-        print("\nFirst observation:")
-        print(json.dumps(bird_data[0], indent=2))
-    else:
-        print("Failed to retrieve bird data")
-    
     
     print("\nCreating database...")
     db_path = create_bird_database(bird_data)
@@ -547,6 +579,10 @@ if __name__ == '__main__':
     # loop until we have 120 rows for location table)
     print("Loading bird data until 120 unique locations are reached...")
     load_until_target(region="US", target=120)
+    print("Done!")
+
+    print("Loading weather data for all observations...")
+    weather_until_complete()
     print("Done!")
     
     # Uncomment to run unit tests instead
