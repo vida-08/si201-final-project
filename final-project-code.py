@@ -551,21 +551,8 @@ def main(): #Kaz
     # Calls all other functions in the correct order.
     # Input: None
     # Output: None
-    pass
 
-
-
-# Debugging/testing area for any code
-class TestCases(unittest.TestCase):
-    # for testing convert_time_stamps function
-    def test_convert_time_stamps(self):
-        self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
-        self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
-        self.assertEqual(convert_time_stamps(""), None)
-        self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
-
-
-if __name__ == '__main__':
+    
     
     bird_data = call_bird_api("US")
     
@@ -607,6 +594,24 @@ if __name__ == '__main__':
     print("Loading weather data for all observations...")
     weather_until_complete()
     print("Done!")
+
+    pass
+
+
+
+# Debugging/testing area for any code
+class TestCases(unittest.TestCase):
+    # for testing convert_time_stamps function
+    def test_convert_time_stamps(self):
+        self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
+        self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
+        self.assertEqual(convert_time_stamps(""), None)
+        self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
+
+
+if __name__ == '__main__':
+
+    main()
     
     # Uncomment to run unit tests instead
     # unittest.main(verbosity=2)
