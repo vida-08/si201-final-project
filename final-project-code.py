@@ -215,45 +215,7 @@ def convert_time_stamps(timestamps): #Vida
         return None
     pass
 
-# def clean_bird_data(raw_bird_data): #Vida
-#     # Clean and process raw bird observation data from the API.
-#     # Inputs: raw data from API
-#     # Outputs: cleaned/processed data ready for database insertion
-#     if not raw_bird_data:
-#         return []
-
-#     cleaned = []
-
-#     for obs in raw_bird_data:
-#         unix_time = convert_time_stamps(obs.get("obsDt"))
-
-#         lat = obs.get("lat")
-#         lng = obs.get("lng")
-
-#         # Reverse geocoding
-#         location_name = None
-#         if lat is not None and lng is not None:
-#             location_name = grab_location(lat, lng)
-
-#         cleaned.append({
-#             "speciesCode": obs.get("speciesCode"),
-#             "comName": obs.get("comName"),
-#             "sciName": obs.get("sciName"),
-#             "locId": obs.get("locId"),
-#             "locName": obs.get("locName"),
-#             "loc_standardized": location_name,
-#             "latitude": lat,
-#             "longitude": lng,
-#             "obsDt": obs.get("obsDt"),
-#             "unix_time": unix_time,
-#             "howMany": obs.get("howMany"),
-#             "subId": obs.get("subId"),
-#         })
-
-#     return cleaned
-
     
-
 def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #Vida
     # Create SQLite database tables to store cleaned API data.
     # Inputs: processed/cleaned data from API
@@ -562,9 +524,10 @@ def calc_total_observations(birds_database, location_list): #Kaz
     pass
 
 
-def calc_land_water_percentage(birds_database, location_input): #Vida
-    # Calculate percentage of observations on water/on land for each bird species
-    # Output: A dictionary mapping each bird species to its land/water observation percentage.
+def calc_climate_type_percentage(birds_database, location_input): #Vida
+    # Calculate percentage of observations of climate type for each bird species
+    # Output: A dictionary mapping each bird species to its climate type observation percentage.
+    
     pass
 
 
