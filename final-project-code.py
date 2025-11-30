@@ -672,7 +672,7 @@ def main(): #Kaz
         print(f"No matching locations found for '{input_queries['location']}'")
         return
     
-    observation_summary = calc_total_observations(db_path, matching_locations)
+    observation_dict = calc_total_observations(db_path, matching_locations)
     print("Observation summary calculated.")
     
 
