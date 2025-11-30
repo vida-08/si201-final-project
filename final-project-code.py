@@ -526,22 +526,26 @@ def create_weather_table(weather_data): #Mizuki
     pass
 
 
-def calc_total_observations(birds_database, location_input): #Kaz
-    # Calculate total number of observations in the input location for each location by bird species
+def calc_total_observations(birds_database, location_list): #Kaz
+    # Calculate total number of observations for each bird species across inputted locations
+    # Inputs: birds_database (path to database), location_list (list of location names)
     # Outputs: A dictionary summarizing totals
     
     conn = sqlite3.connect(birds_database)
     cur = conn.cursor()
     
-    # Query to count observations per bird species for the given location
-    cur.execute("""
+    # Create placeholders for SQL IN clause
+    placeholders = ','.join('?' * len(location_list))
+    
+    # Query to count observations per bird species for the given locations
+    cur.execute(f"""
         SELECT bo.com_name, bo.sci_name, COUNT(*) as observation_count
         FROM bird_observations bo
         JOIN locations l ON bo.location_id = l.id
-        WHERE l.loc_name = ?
+        WHERE l.loc_name IN ({placeholders})
         GROUP BY bo.species_code, bo.com_name, bo.sci_name
         ORDER BY observation_count DESC
-    """, (location_input,))
+    """, location_list)
     
     results = cur.fetchall()
     conn.close()
@@ -589,8 +593,22 @@ def request_input_query(query_dict):
     return query_dict
 
 
+def get_matching_location(input_name, db_name=DB_NAME):
+    # Get matching location names from the database based on user input
+    conn = sqlite3.connect(db_name)
+    cur = conn.cursor()
 
-    pass
+    cur.execute("""
+        SELECT loc_name FROM locations
+        WHERE loc_name LIKE ?
+    """, (f"%{input_name}%",))
+
+    results = cur.fetchall()
+    conn.close()
+
+    matching_locations = [row[0] for row in results]
+    
+    return matching_locations
 
 
 def main(): #Kaz
@@ -598,7 +616,13 @@ def main(): #Kaz
     # Input: None
     # Output: None
     
-    bird_data = call_bird_api("US")
+    # Get region code from user input
+    region_code = input("Enter region code (e.g., 'US', 'CA', 'GB'): ").strip().upper()
+    if not region_code:
+        region_code = "US"  # Default to US if no input
+        print(f"No region code provided. Using default: {region_code}")
+    
+    bird_data = call_bird_api(region_code)
     
     print("\nCreating database...")
     db_path = create_bird_database(bird_data)
@@ -632,12 +656,26 @@ def main(): #Kaz
     
     # loop until we have 120 rows for location table)
     print("Loading bird data until 120 unique locations are reached...")
-    load_until_target(region="US", target=120)
+    load_until_target(region=region_code, target=120)
     print("Done!")
 
     print("Loading weather data for all observations...")
     weather_until_complete()
     print("Done!")
+
+    print("Building reports and visualizations...")
+    input_queries = {}
+    request_input_query(input_queries)
+
+    matching_locations = get_matching_location(input_queries['location'])
+    if not matching_locations:
+        print(f"No matching locations found for '{input_queries['location']}'")
+        return
+    
+    observation_summary = calc_total_observations(db_path, matching_locations)
+    print("Observation summary calculated.")
+    
+
 
     pass
 
