@@ -674,11 +674,10 @@ def main(): #Kaz
     
     observation_dict = calc_total_observations(db_path, matching_locations)
     print("Observation summary calculated.")
-    
+    print(observation_dict)
 
 
     pass
-
 
 
 # Debugging/testing area for any code
