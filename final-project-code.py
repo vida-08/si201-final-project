@@ -56,9 +56,9 @@ def get_api_keys(): #Kaz
         return {}
         
 
-def call_bird_api(region_code="KZ"): #Kaz
+def call_bird_api(region_code="US"): #Kaz
     # Call the eBird API to get recent bird observations for a specific region
-    # Input: region_code (string) - default is "KZ" for Kazakhstan
+    # Input: region_code (string) - default is "US" for United States
     # Output: A list of dictionaries containing bird observation data, or None if error
     
     api_keys = get_api_keys()
@@ -146,15 +146,24 @@ def grab_location(latitude, longitude): #Kaz
             # Construct a readable location name from the response
             # Response structure: [{"name": "City", "country": "GB", "state": "State", ...}]
             name = location.get('name', '')
+            state = location.get('state', '')
             country = location.get('country', '')   
             
-            # Build location string: "City, Country"
-            if name and country:
+            # Build location string: "City, State, Country" or variations
+            if name and state and country:
+                location_name = f"{name}, {state}, {country}"
+            elif name and country:
                 location_name = f"{name}, {country}"
+            elif name and state:
+                location_name = f"{name}, {state}"
             elif name:
                 location_name = name
+            elif state and country:
+                location_name = f"{state}, {country}"
             elif country:
                 location_name = country
+            elif state:
+                location_name = state
             else:
                 location_name = "Unknown"
             
@@ -517,9 +526,35 @@ def create_weather_table(weather_data): #Mizuki
     pass
 
 
-def calc_total_observations(birds_database, weather_database, land_water_database, location_input): #Kaz
+def calc_total_observations(birds_database, location_input): #Kaz
     # Calculate total number of observations in the input location for each location by bird species
     # Outputs: A dictionary summarizing totals
+    
+    conn = sqlite3.connect(birds_database)
+    cur = conn.cursor()
+    
+    # Query to count observations per bird species for the given location
+    cur.execute("""
+        SELECT bo.com_name, bo.sci_name, COUNT(*) as observation_count
+        FROM bird_observations bo
+        JOIN locations l ON bo.location_id = l.id
+        WHERE l.loc_name = ?
+        GROUP BY bo.species_code, bo.com_name, bo.sci_name
+        ORDER BY observation_count DESC
+    """, (location_input,))
+    
+    results = cur.fetchall()
+    conn.close()
+    
+    # Build dictionary with species names as keys and observation counts as values
+    observation_summary = {}
+    for common_name, scientific_name, count in results:
+        observation_summary[common_name] = {
+            'scientific_name': scientific_name,
+            'total_observations': count
+        }
+    
+    return observation_summary
     pass
 
 
@@ -546,13 +581,22 @@ def generate_report(): #Mizuki
     # Input: All computed summaries, saved images from visualization
     pass
 
+def request_input_query(query_dict):
+    # Request user input for location and species queries
+    query_dict['location'] = input("Enter location (e.g., 'Ann Arbor, US'): ").strip()
+    query_dict['species'] = input("Enter bird species common name (e.g., 'Bald Eagle'): ").strip()
+
+    return query_dict
+
+
+
+    pass
+
 
 def main(): #Kaz
     # Calls all other functions in the correct order.
     # Input: None
     # Output: None
-
-    
     
     bird_data = call_bird_api("US")
     
