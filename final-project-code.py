@@ -524,20 +524,50 @@ def calc_total_observations(birds_database, location_list): #Kaz
     pass
 
 
-def calc_climate_type_percentage(birds_database, location_input): #Vida
-    # Calculate percentage of observations of climate type for each bird species
-    # Output: A dictionary mapping each bird species to its climate type observation percentage.
+def calc_climate_type_percentage(birds_database): #Vida
+    # Calculate percentage of observations of climate type for birds
+    # Output: A dictionary mapping each climate type to the number of observations
+    conn = sqlite3.connect(birds_database)
+    cur = conn.cursor()
     
+    cur.execute("""
+        SELECT l.koeppen_geiger_zone
+        FROM bird_observations bo
+        JOIN locations l
+        ON bo.location_id = l.id
+        WHERE l.koeppen_geiger_zone IS NOT NULL
+    """)
+
+    rows = cur.fetchall()
+    conn.close()
+
+    if not rows:
+        return {}
+    
+    climate_counts = {}
+    for row in rows:
+        climate = row[0]
+        climate_counts[climate] = climate_counts.get(climate, 0) + 1
+
+    total = sum(climate_counts.values())
+
+    climate_percentages = {}
+
+    for climate, count in climate_counts.items():
+        percentage = (count / total) * 100
+        climate_percentages[climate] = round(percentage, 2)
+
+    return climate_percentages
     pass
 
 
-def calc_historical_avg_temp(weather_database, birds_database, species_name, location_input,converted_time_stamp): #Mizuki
-    # Compute historical average temperatures associated with sightings of a migratory bird species by matching bird observation timestamps to corresponding weather data.
+def calc_historical_avg_temp(birds_database, species_name): #Mizuki
+    # Compute historical average temperatures associated with sightings of a bird species by matching bird observation timestamps to corresponding weather data.
     # Output: a dictionary
     pass
 
 
-def data_visualization(observation_summary, temperature_summary, land_water_percentage): #Vida
+def data_visualization(observation_summary, temperature_summary, land_water_percentage): #Vida & Mizuki
     # Generate charts (line/ bar/ scatter) using Seaborn based on calculations
     # Output: Visual files saved to project directory (e.g., .png graphs)
     pass
@@ -617,7 +647,7 @@ def main(): #Kaz
     except Exception as e:
         print(f"Error verifying database: {e}")
     
-    # loop until we have 120 rows for location table)
+    # loop until we have 120 rows for location table
     print("Loading bird data until 120 unique locations are reached...")
     load_until_target(region=region_code, target=120)
     print("Done!")
@@ -635,10 +665,15 @@ def main(): #Kaz
         print(f"No matching locations found for '{input_queries['location']}'")
         return
     
+    # Observation Summary Calculation
     observation_dict = calc_total_observations(db_path, matching_locations)
-    print("Observation summary calculated.")
+    print("\nObservation summary calculated.")
     print(observation_dict)
 
+    # Climate Type Summary Calculation
+    cliamte_percentage_dict = calc_climate_type_percentage(DB_NAME)
+    print("\nClimate Type Percentage Calculated.")
+    print(cliamte_percentage_dict)
 
     pass
 
