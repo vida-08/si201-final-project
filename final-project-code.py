@@ -529,7 +529,7 @@ def calc_climate_type_percentage(birds_database): #Vida
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT l.koeppen_geiger_zone
+        SELECT l.koeppen_geiger_zone, l.zone_description
         FROM bird_observations bo
         JOIN locations l
         ON bo.location_id = l.id
@@ -543,9 +543,9 @@ def calc_climate_type_percentage(birds_database): #Vida
         return {}
     
     climate_counts = {}
-    for row in rows:
-        climate = row[0]
-        climate_counts[climate] = climate_counts.get(climate, 0) + 1
+    for code, description in rows:
+        readable_key = f"{code} ({description})"
+        climate_counts[readable_key] = climate_counts.get(readable_key, 0) + 1
 
     total = sum(climate_counts.values())
 
