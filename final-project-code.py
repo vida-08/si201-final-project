@@ -576,6 +576,24 @@ def climate_percentage_pie(climate_type_percentage): #Vida
     sizes = list(climate_type_percentage.values())
     colors = sns.color_palette("Set3", n_colors=len(labels))
 
+    fig, ax = plt.subplots(figsize=(14, 8))
+    ax.set_position([-0.15, 0.1, 1.0, 0.8])
+
+    wedges, texts, autotexts = ax.pie(
+        sizes,
+        labels=None,
+        autopct='%1.1f%%',
+        startangle=140,
+        colors=colors,
+        textprops={'fontsize': 6}
+    )
+
+    ax.legend(wedges, labels, title="Climate Types", loc="center left", bbox_to_anchor=(0.72, 0.5), fontsize=9)
+
+    plt.title("Percentage of Bird Observations by Climate Type")
+    plt.axis('equal')
+    plt.show()
+
     pass
 
 def temp_history_scatter(temperature_summary): #Mizuki
@@ -690,6 +708,9 @@ def main(): #Kaz
     print("\nClimate Type Percentage Calculated.")
     print(cliamte_percentage_dict)
 
+    # Visualization
+    climate_percentage_pie(cliamte_percentage_dict)
+    
     pass
 
 
