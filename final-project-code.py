@@ -21,6 +21,7 @@ import unittest
 import os
 from datetime import datetime, timezone
 import sqlite3
+import matplotlib.pyplot as plt
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_NAME = os.path.join(BASE_DIR, "final_project.db")
@@ -567,10 +568,24 @@ def calc_historical_avg_temp(birds_database, species_name): #Mizuki
     pass
 
 
-def data_visualization(observation_summary, temperature_summary, land_water_percentage): #Vida & Mizuki
-    # Generate charts (line/ bar/ scatter) using Seaborn based on calculations
-    # Output: Visual files saved to project directory (e.g., .png graphs)
+# Data Visualization Functions: 
+def obs_summary_bar(observation_summary): #Vida
+    # Bar chart for total number of observations in the input location for each location by bird species
     pass
+
+def climate_percentage_pie(climate_type_percentage): #Vida
+    # Pie chart for percentage of observations of climate zone for each bird species
+    labels = list()
+    pass
+
+def temp_history_scatter(temperature_summary): #Mizuki
+    # Scatterplot for the historical average temperatures of observations of a migratory bird’s observational.
+    pass
+
+# Extra credit 1 -- Mizuki
+
+# Extra credit 2 -- Mizuki
+
 
 
 def generate_report(): #Mizuki
@@ -681,11 +696,11 @@ def main(): #Kaz
 # Debugging/testing area for any code
 class TestCases(unittest.TestCase):
     # for testing convert_time_stamps function
-    # def test_convert_time_stamps(self):
-    #     self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
-    #     self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
-    #     self.assertEqual(convert_time_stamps(""), None)
-    #     self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
+    def test_convert_time_stamps(self):
+        self.assertEqual(convert_time_stamps("2020-01-19 10:07"), 1579428420.0)
+        self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
+        self.assertEqual(convert_time_stamps(""), None)
+        self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
     
     def test_climate_percentage_calc(self):
         self.assertEqual(sum(calc_climate_type_percentage(DB_NAME).values()), 100)
@@ -696,6 +711,6 @@ if __name__ == '__main__':
     main()
     
     # Uncomment to run unit tests instead
-    unittest.main(verbosity=2)
+    # unittest.main(verbosity=2)
 
 
