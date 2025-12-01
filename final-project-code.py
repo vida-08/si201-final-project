@@ -567,7 +567,33 @@ def calc_historical_avg_temp(birds_database, species_name): #Mizuki
 
 # Data Visualization Functions: 
 def obs_summary_bar(observation_summary): #Vida
-    # Bar chart for total number of observations in the input location for each location by bird species
+    # Bar chart for total number of observations in the input location for each location by bird species'
+    species = list(observation_summary.keys())
+    counts = [] 
+    for sp in observation_summary:
+        info = observation_summary[sp]
+        count = info['total_observations']
+        counts.append(count)
+    
+    plt.figure(figsize=(14, 8))
+
+    sns.barplot(
+        x=species,
+        y=counts,
+        hue=species,
+        dodge=False,
+        legend=False,
+        palette="viridis"
+    )
+
+    plt.xlabel("Total Observations", fontsize=12)
+    plt.ylabel("Bird Species", fontsize=12)
+    plt.title("Total Bird Observations by Species", fontsize=14, pad=15)
+
+    plt.xticks(rotation=90, ha='center', fontsize=8)
+
+    plt.tight_layout()
+    plt.show()
     pass
 
 def climate_percentage_pie(climate_type_percentage): #Vida
@@ -709,6 +735,7 @@ def main(): #Kaz
     print(cliamte_percentage_dict)
 
     # Visualization
+    obs_summary_bar(observation_dict)
     climate_percentage_pie(cliamte_percentage_dict)
     
     pass
