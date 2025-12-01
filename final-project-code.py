@@ -7,7 +7,7 @@
 # Member 2
     # Name: Kawani Mumtaz
     # Student id: 8517 3732
-    # Email: kjmumtaz
+    # Email: kjmumtaz@umich.edu
 # Member 3
     # Name: Mizuki Kuno
     # Student id:78832653
@@ -22,6 +22,7 @@ import os
 from datetime import datetime, timezone
 import sqlite3
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_NAME = os.path.join(BASE_DIR, "final_project.db")
@@ -219,16 +220,12 @@ def convert_time_stamps(timestamps): #Vida
     
 def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #Vida
     # Create SQLite database tables to store cleaned API data.
-    # Inputs: processed/cleaned data from API
+    # Inputs: data from API
     # Outputs: database connections or paths
 
-    # Stores cleaned bird data in a database in a rubric-compliant way:
-    # Inserts NO MORE THAN 25 new items per run.
-    # Prevents duplicate rows using unique constraints + OR IGNORE.
     # Creates 2 tables that share an integer key:
-    #     1. locations (id INTEGER PRIMARY KEY, name TEXT UNIQUE, lat, lon)
-    #     2. bird_observations (references locations.id)
-    # Only process the first N rows (required by rubric)
+    #   1. locations
+    #   2. bird_observations
     conn = sqlite3.connect(db_name)
     cur = conn.cursor()
 
@@ -575,7 +572,10 @@ def obs_summary_bar(observation_summary): #Vida
 
 def climate_percentage_pie(climate_type_percentage): #Vida
     # Pie chart for percentage of observations of climate zone for each bird species
-    labels = list()
+    labels = list(climate_type_percentage.keys())
+    sizes = list(climate_type_percentage.values())
+    colors = sns.color_palette("Set3", n_colors=len(labels))
+
     pass
 
 def temp_history_scatter(temperature_summary): #Mizuki
