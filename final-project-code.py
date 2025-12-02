@@ -693,6 +693,42 @@ def climate_percentage_pie(climate_type_percentage): #Vida
 
 def temp_history_scatter(temperature_summary): #Mizuki
     # Scatterplot for the historical average temperatures of observations of a migratory bird’s observational.
+    # Input: temperature_summary dictionary from calc_historical_avg_temp
+    # Output: Displays scatter plot
+    
+    if not temperature_summary:
+        print("No temperature data to visualize")
+        return
+    
+    species = list(temperature_summary.keys())
+    avg_temps = []
+    obs_counts = []
+    
+    for sp in temperature_summary:
+        info = temperature_summary[sp]
+        avg_temps.append(info['avg_temperature'])
+        obs_counts.append(info['observation_count'])
+    
+    plt.figure(figsize=(12, 8))
+    
+    scatter = plt.scatter(
+        avg_temps,
+        obs_counts,
+        c=avg_temps,
+        cmap='coolwarm',
+        s=100,
+        alpha=0.7,
+        edgecolors='black'
+    )
+    
+    plt.colorbar(scatter, label='Avg Temperature (°C)')
+    
+    plt.xlabel("Average Temperature (°C)", fontsize=12)
+    plt.ylabel("Number of Observations", fontsize=12)
+    plt.title("Bird Species: Average Temperature vs Observation Count", fontsize=14, pad=15)
+    
+    plt.tight_layout()
+    plt.show()
     pass
 
 # Extra credit 1 -- Mizuki
