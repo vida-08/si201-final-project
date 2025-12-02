@@ -811,7 +811,7 @@ def generate_report(): #Mizuki
 def request_input_query(query_dict):
     # Request user input for location and species queries
     query_dict['location'] = input("Enter location (e.g., 'Ann Arbor, US'): ").strip()
-    query_dict['species'] = input("Enter bird species common name (e.g., 'Bald Eagle'): ").strip()
+    query_dict['species'] = input("Enter bird species common name (e.g., 'Bald Eagle') (enter NONE input for all species): ").strip()
 
     return query_dict
 
