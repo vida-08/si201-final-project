@@ -833,54 +833,64 @@ def main(): #Kaz
     # Input: None
     # Output: None
     
-    # Get region code from user input
-    region_code = input("Enter region code (e.g., 'US', 'CA', 'GB'): ").strip().upper()
-    if not region_code:
-        region_code = "US"  # Default to US if no input
-        print(f"No region code provided. Using default: {region_code}")
-    
-    bird_data = call_bird_api(region_code)
-    
-    print("\nCreating database...")
-    db_path = create_bird_database(bird_data)
 
-    if db_path:
-        print(f"Database created successfully at: {db_path}")
+    update_yn = input("Do you want to update the bird database with new observations? (y/n): ").strip().lower()
+    
+    if update_yn == 'y':
+
+        # Get region code from user input
+        region_code = input("Enter region code (e.g., 'US', 'CA', 'GB'): ").strip().upper()
+        if not region_code:
+            region_code = "US"  # Default to US if no input
+            print(f"No region code provided. Using default: {region_code}")
+        
+        bird_data = call_bird_api(region_code)
+        
+        print("\nCreating database...")
+        db_path = create_bird_database(bird_data)
+
+        if db_path:
+            print(f"Database created successfully at: {db_path}")
+        else:
+            print("Failed to create bird database")
+
+        # Additional check: count rows to confirm insertion
+        try:
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+
+            # Count rows in locations table
+            cur.execute("SELECT COUNT(*) FROM locations")
+            loc_count = cur.fetchone()[0]
+
+            # Count rows in bird_observations table
+            cur.execute("SELECT COUNT(*) FROM bird_observations")
+            obs_count = cur.fetchone()[0]
+
+            print(f"\nDatabase check:")
+            print(f"-Locations table contains: {loc_count} rows")
+            print(f"-Bird observations table contains: {obs_count} rows")
+
+            conn.close()
+
+        except Exception as e:
+            print(f"Error verifying database: {e}")
+        
+        # loop until we have 120 rows for location table
+        print("Loading bird data until 120 unique locations are reached...")
+        load_until_target(region=region_code, target=120)
+        print("Done!")
+
+        print("Loading weather data for all observations...")
+        weather_until_complete()
+        print("Done!")
+
+        print("Building reports and visualizations...")
+
     else:
-        print("Failed to create bird database")
+        print("Skipping database update.")
+        db_path = DB_NAME
 
-    # Additional check: count rows to confirm insertion
-    try:
-        conn = sqlite3.connect(db_path)
-        cur = conn.cursor()
-
-        # Count rows in locations table
-        cur.execute("SELECT COUNT(*) FROM locations")
-        loc_count = cur.fetchone()[0]
-
-        # Count rows in bird_observations table
-        cur.execute("SELECT COUNT(*) FROM bird_observations")
-        obs_count = cur.fetchone()[0]
-
-        print(f"\nDatabase check:")
-        print(f"-Locations table contains: {loc_count} rows")
-        print(f"-Bird observations table contains: {obs_count} rows")
-
-        conn.close()
-
-    except Exception as e:
-        print(f"Error verifying database: {e}")
-    
-    # loop until we have 120 rows for location table
-    print("Loading bird data until 120 unique locations are reached...")
-    load_until_target(region=region_code, target=120)
-    print("Done!")
-
-    print("Loading weather data for all observations...")
-    weather_until_complete()
-    print("Done!")
-
-    print("Building reports and visualizations...")
     input_queries = {}
     request_input_query(input_queries)
 
