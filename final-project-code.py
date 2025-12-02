@@ -563,6 +563,74 @@ def calc_climate_type_percentage(birds_database): #Vida
 def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
     # Compute historical average temperatures associated with sightings of a bird species by matching bird observation timestamps to corresponding weather data.
     # Output: a dictionary
+    conn = sqlite3.connect(birds_database)
+    cur = conn.cursor()
+    
+    if species_name:
+        # Query for a specific species using JOIN
+        cur.execute("""
+            SELECT bo.com_name, bo.sci_name, 
+                   wd.temperature_mean, wd.temperature_max, wd.temperature_min
+            FROM bird_observations bo
+            JOIN weather_data wd ON bo.id = wd.bird_observation_id
+            WHERE bo.com_name LIKE ?
+        """, (f"%{species_name}%",))
+    else:
+        # Query for all species using JOIN
+        cur.execute("""
+            SELECT bo.com_name, bo.sci_name, 
+                   wd.temperature_mean, wd.temperature_max, wd.temperature_min
+            FROM bird_observations bo
+            JOIN weather_data wd ON bo.id = wd.bird_observation_id
+        """)
+    
+    rows = cur.fetchall()
+    conn.close()
+
+    if not rows:
+        return {}
+    
+    # Build dictionary to accumulate temperature data per species
+    species_temps = {}
+    for row in rows:
+        com_name, sci_name, temp_mean, temp_max, temp_min = row
+        
+        if com_name not in species_temps:
+            species_temps[com_name] = {
+                'scientific_name': sci_name,
+                'temp_means': [],
+                'temp_maxs': [],
+                'temp_mins': []
+            }
+        
+        if temp_mean is not None:
+            species_temps[com_name]['temp_means'].append(temp_mean)
+        if temp_max is not None:
+            species_temps[com_name]['temp_maxs'].append(temp_max)
+        if temp_min is not None:
+            species_temps[com_name]['temp_mins'].append(temp_min)
+    
+    # Calculate averages for each species
+    temperature_summary = {}
+    for com_name, data in species_temps.items():
+        temp_means = data['temp_means']
+        temp_maxs = data['temp_maxs']
+        temp_mins = data['temp_mins']
+        
+        if temp_means:
+            avg_temp = sum(temp_means) / len(temp_means)
+            avg_max = sum(temp_maxs) / len(temp_maxs) if temp_maxs else None
+            avg_min = sum(temp_mins) / len(temp_mins) if temp_mins else None
+            
+            temperature_summary[com_name] = {
+                'scientific_name': data['scientific_name'],
+                'avg_temperature': round(avg_temp, 2),
+                'avg_max_temperature': round(avg_max, 2) if avg_max else None,
+                'avg_min_temperature': round(avg_min, 2) if avg_min else None,
+                'observation_count': len(temp_means)
+            }
+    
+    return temperature_summary
     pass
 
 
