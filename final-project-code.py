@@ -882,9 +882,10 @@ def main(): #Kaz
         except Exception as e:
             print(f"Error verifying database: {e}")
         
-        # loop until we have 120 rows for location table
-        print("Loading bird data until 120 unique locations are reached...")
-        load_until_target(region=region_code, target=120)
+        target_X = input("Enter target number of unique locations to load (default 120): ").strip()
+        # loop until we have X rows for location table
+        print("Loading bird data until target unique locations are reached...")
+        load_until_target(region=region_code, target=int(target_X))
         print("Done!")
 
         print("Loading weather data for all observations...")
