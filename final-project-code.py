@@ -562,7 +562,7 @@ def calc_climate_type_percentage(birds_database): #Vida
     pass
 
 
-def calc_historical_avg_temp(birds_database, species_name): #Mizuki
+def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
     # Compute historical average temperatures associated with sightings of a bird species by matching bird observation timestamps to corresponding weather data.
     # Output: a dictionary
     pass
@@ -577,6 +577,7 @@ def data_visualization(observation_summary, temperature_summary, land_water_perc
 def generate_report(): #Mizuki
     # Combine all calculations and visualizations into a single formatted document
     # Input: All computed summaries, saved images from visualization
+    
     pass
 
 def request_input_query(query_dict):
