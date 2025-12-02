@@ -1085,6 +1085,7 @@ def main(): #Kaz
     climate_percentage_pie(cliamte_percentage_dict)
     temp_history_scatter(temperature_summary_dict)
     temp_range_bar(temperature_summary_dict)
+    climate_temp_heatmap(DB_NAME)
     
     pass
 
