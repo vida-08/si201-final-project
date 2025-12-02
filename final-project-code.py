@@ -432,18 +432,19 @@ def weather_until_complete(db_name=DB_NAME, max_rows_per_run=20):
     pass
 
 
-def create_weather_table(weather_data): #Mizuki
+def create_weather_table(weather_data, db_name=DB_NAME): #Mizuki
     # Create table in the main database.
     # Inputs: processed/cleaned data from API (list of dicts with bird_observation_id)
     # Outputs: database connections or paths
-    db_path = os.path.join(BASE_DIR, DB_NAME)
-    conn = sqlite3.connect(db_path)
+    
+    conn = sqlite3.connect(db_name)
     cur = conn.cursor()
     
-    # Create weather table with foreign key to bird_observations
+    # Create weather_data table that references bird_observations
     cur.execute("""
         CREATE TABLE IF NOT EXISTS weather_data (
-            bird_observation_id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bird_observation_id INTEGER UNIQUE,
             latitude REAL,
             longitude REAL,
             date TEXT,
@@ -455,36 +456,36 @@ def create_weather_table(weather_data): #Mizuki
         )
     """)
     
-    # Insert weather data if provided
-    if weather_data:
-        for weather in weather_data:
-            # Check if this record already exists (avoid duplicates)
+    inserted = 0
+    for weather in weather_data:
+        try:
             cur.execute("""
-                SELECT bird_observation_id FROM weather_data 
-                WHERE bird_observation_id = ?
-            """, (weather.get('bird_observation_id'),))
-            
-            if cur.fetchone() is None:
-                cur.execute("""
-                    INSERT INTO weather_data 
-                    (bird_observation_id, latitude, longitude, date, temperature_mean, 
-                     temperature_max, temperature_min, unix_timestamp)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    weather.get('bird_observation_id'),
-                    weather.get('latitude'),
-                    weather.get('longitude'),
-                    weather.get('date'),
-                    weather.get('temperature_mean'),
-                    weather.get('temperature_max'),
-                    weather.get('temperature_min'),
-                    weather.get('unix_timestamp')
-                ))
+                INSERT OR IGNORE INTO weather_data (
+                    bird_observation_id, latitude, longitude, date,
+                    temperature_mean, temperature_max, temperature_min, unix_timestamp
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                weather.get('bird_observation_id'),
+                weather.get('latitude'),
+                weather.get('longitude'),
+                weather.get('date'),
+                weather.get('temperature_mean'),
+                weather.get('temperature_max'),
+                weather.get('temperature_min'),
+                weather.get('unix_timestamp')
+            ))
+            if cur.rowcount > 0:
+                inserted += 1
+        except Exception as e:
+            print(f"Error inserting weather data: {e}")
+            continue
     
     conn.commit()
     conn.close()
     
-    return db_path
+    print(f"Inserted {inserted} weather records into database")
+    return db_name
     pass
 
 
