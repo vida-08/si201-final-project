@@ -7,7 +7,7 @@
 # Member 2
     # Name: Kawani Mumtaz
     # Student id: 8517 3732
-    # Email: kjmumtaz
+    # Email: kjmumtaz@umich.edu
 # Member 3
     # Name: Mizuki Kuno
     # Student id:78832653
@@ -21,6 +21,8 @@ import unittest
 import os
 from datetime import datetime, timezone
 import sqlite3
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_NAME = os.path.join(BASE_DIR, "final_project.db")
@@ -218,16 +220,12 @@ def convert_time_stamps(timestamps): #Vida
     
 def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #Vida
     # Create SQLite database tables to store cleaned API data.
-    # Inputs: processed/cleaned data from API
+    # Inputs: data from API
     # Outputs: database connections or paths
 
-    # Stores cleaned bird data in a database in a rubric-compliant way:
-    # Inserts NO MORE THAN 25 new items per run.
-    # Prevents duplicate rows using unique constraints + OR IGNORE.
     # Creates 2 tables that share an integer key:
-    #     1. locations (id INTEGER PRIMARY KEY, name TEXT UNIQUE, lat, lon)
-    #     2. bird_observations (references locations.id)
-    # Only process the first N rows (required by rubric)
+    #   1. locations
+    #   2. bird_observations
     conn = sqlite3.connect(db_name)
     cur = conn.cursor()
 
@@ -532,7 +530,7 @@ def calc_climate_type_percentage(birds_database): #Vida
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT l.koeppen_geiger_zone
+        SELECT l.koeppen_geiger_zone, l.zone_description
         FROM bird_observations bo
         JOIN locations l
         ON bo.location_id = l.id
@@ -546,9 +544,9 @@ def calc_climate_type_percentage(birds_database): #Vida
         return {}
     
     climate_counts = {}
-    for row in rows:
-        climate = row[0]
-        climate_counts[climate] = climate_counts.get(climate, 0) + 1
+    for code, description in rows:
+        readable_key = f"{code} ({description})"
+        climate_counts[readable_key] = climate_counts.get(readable_key, 0) + 1
 
     total = sum(climate_counts.values())
 
@@ -568,10 +566,71 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
     pass
 
 
-def data_visualization(observation_summary, temperature_summary, land_water_percentage): #Vida & Mizuki
-    # Generate charts (line/ bar/ scatter) using Seaborn based on calculations
-    # Output: Visual files saved to project directory (e.g., .png graphs)
+# Data Visualization Functions: 
+def obs_summary_bar(observation_summary): #Vida
+    # Bar chart for total number of observations in the input location for each location by bird species'
+    species = list(observation_summary.keys())
+    counts = [] 
+    for sp in observation_summary:
+        info = observation_summary[sp]
+        count = info['total_observations']
+        counts.append(count)
+    
+    plt.figure(figsize=(14, 8))
+
+    sns.barplot(
+        x=species,
+        y=counts,
+        hue=species,
+        dodge=False,
+        legend=False,
+        palette="viridis"
+    )
+
+    plt.xlabel("Total Observations", fontsize=12)
+    plt.ylabel("Bird Species", fontsize=12)
+    plt.title("Total Bird Observations by Species", fontsize=14, pad=15)
+
+    plt.xticks(rotation=90, ha='center', fontsize=8)
+
+    plt.tight_layout()
+    plt.show()
     pass
+
+def climate_percentage_pie(climate_type_percentage): #Vida
+    # Pie chart for percentage of observations of climate zone for each bird species
+    labels = list(climate_type_percentage.keys())
+    sizes = list(climate_type_percentage.values())
+    colors = sns.color_palette("Set3", n_colors=len(labels))
+
+    fig, ax = plt.subplots(figsize=(14, 8))
+    ax.set_position([-0.15, 0.1, 1.0, 0.8])
+
+    wedges, texts, autotexts = ax.pie(
+        sizes,
+        labels=None,
+        autopct='%1.1f%%',
+        startangle=140,
+        colors=colors,
+        textprops={'fontsize': 6}
+    )
+
+    ax.legend(wedges, labels, title="Climate Types", loc="center left", bbox_to_anchor=(0.72, 0.5), fontsize=9)
+
+    plt.title("Percentage of Bird Observations by Climate Type")
+    plt.axis('equal')
+    plt.show()
+
+    pass
+
+def temp_history_scatter(temperature_summary): #Mizuki
+    # Scatterplot for the historical average temperatures of observations of a migratory bird’s observational.
+    pass
+
+# Extra credit 1 -- Mizuki
+
+# Extra credit 2 -- Mizuki
+
 
 
 def generate_report(): #Mizuki
@@ -677,6 +736,10 @@ def main(): #Kaz
     print("\nClimate Type Percentage Calculated.")
     print(cliamte_percentage_dict)
 
+    # Visualization
+    obs_summary_bar(observation_dict)
+    climate_percentage_pie(cliamte_percentage_dict)
+    
     pass
 
 
@@ -688,6 +751,9 @@ class TestCases(unittest.TestCase):
         self.assertEqual(convert_time_stamps("2017-08-23 10:11"), 1503483060.0)
         self.assertEqual(convert_time_stamps(""), None)
         self.assertEqual(convert_time_stamps("invalid-timestamp"), None)
+    
+    def test_climate_percentage_calc(self):
+        self.assertEqual(sum(calc_climate_type_percentage(DB_NAME).values()), 100)
 
 
 if __name__ == '__main__':
