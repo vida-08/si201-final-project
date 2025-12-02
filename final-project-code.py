@@ -780,7 +780,74 @@ def temp_range_bar(temperature_summary):
     pass
 
 # Extra credit 2 -- Mizuki
-
+def climate_temp_heatmap(birds_database): 
+    # Heatmap showing observation counts by climate zone and temperature range
+    # Input: birds_database (path to database)
+    # Output: Displays heatmap
+    
+    conn = sqlite3.connect(birds_database)
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT l.koeppen_geiger_zone,
+               CASE 
+                   WHEN wd.temperature_mean < 0 THEN 'Below 0°C'
+                   WHEN wd.temperature_mean < 10 THEN '0-10°C'
+                   WHEN wd.temperature_mean < 20 THEN '10-20°C'
+                   WHEN wd.temperature_mean < 30 THEN '20-30°C'
+                   ELSE 'Above 30°C'
+               END as temp_range,
+               COUNT(*) as count
+        FROM bird_observations bo
+        JOIN locations l ON bo.location_id = l.id
+        JOIN weather_data wd ON bo.id = wd.bird_observation_id
+        WHERE l.koeppen_geiger_zone IS NOT NULL AND wd.temperature_mean IS NOT NULL
+        GROUP BY l.koeppen_geiger_zone, temp_range
+    """)
+    
+    rows = cur.fetchall()
+    conn.close()
+    
+    if not rows:
+        print("No data for heatmap")
+        return
+    
+    # Build a dictionary for the heatmap data
+    climate_zones = []
+    temp_ranges = ['Below 0°C', '0-10°C', '10-20°C', '20-30°C', 'Above 30°C']
+    heatmap_data = {}
+    
+    for zone, temp_range, count in rows:
+        if zone not in heatmap_data:
+            heatmap_data[zone] = {}
+            climate_zones.append(zone)
+        heatmap_data[zone][temp_range] = count
+    
+    # Create matrix for heatmap
+    matrix = []
+    for zone in climate_zones:
+        row = []
+        for temp in temp_ranges:
+            row.append(heatmap_data[zone].get(temp, 0))
+        matrix.append(row)
+    
+    plt.figure(figsize=(12, 8))
+    
+    sns.heatmap(matrix, 
+                annot=True, 
+                fmt='.0f', 
+                cmap='YlOrRd',
+                xticklabels=temp_ranges,
+                yticklabels=climate_zones,
+                linewidths=0.5)
+    
+    plt.xlabel("Temperature Range", fontsize=12)
+    plt.ylabel("Köppen Climate Zone", fontsize=12)
+    plt.title("Bird Observations: Climate Zone vs Temperature", fontsize=14, pad=15)
+    
+    plt.tight_layout()
+    plt.show()
+    pass
 
 
 def generate_report(): #Mizuki
