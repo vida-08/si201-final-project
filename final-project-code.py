@@ -580,7 +580,8 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
         # Query for a specific species using JOIN
         cur.execute("""
             SELECT bo.com_name, bo.sci_name, 
-                   wd.temperature_mean, wd.temperature_max, wd.temperature_min
+                   wd.temperature_mean, wd.temperature_max, wd.temperature_min,
+                    bo.how_many
             FROM bird_observations bo
             JOIN weather_data wd ON bo.id = wd.bird_observation_id
             WHERE bo.com_name LIKE ?
@@ -589,7 +590,8 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
         # Query for all species using JOIN
         cur.execute("""
             SELECT bo.com_name, bo.sci_name, 
-                   wd.temperature_mean, wd.temperature_max, wd.temperature_min
+                   wd.temperature_mean, wd.temperature_max, wd.temperature_min,
+                    bo.how_many
             FROM bird_observations bo
             JOIN weather_data wd ON bo.id = wd.bird_observation_id
         """)
@@ -603,14 +605,15 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
     # Build dictionary to accumulate temperature data per species
     species_temps = {}
     for row in rows:
-        com_name, sci_name, temp_mean, temp_max, temp_min = row
+        com_name, sci_name, temp_mean, temp_max, temp_min, how_many = row
         
         if com_name not in species_temps:
             species_temps[com_name] = {
                 'scientific_name': sci_name,
                 'temp_means': [],
                 'temp_maxs': [],
-                'temp_mins': []
+                'temp_mins': [],
+                'how_many': []
             }
         
         if temp_mean is not None:
@@ -619,13 +622,15 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
             species_temps[com_name]['temp_maxs'].append(temp_max)
         if temp_min is not None:
             species_temps[com_name]['temp_mins'].append(temp_min)
-    
+        if how_many is not None:
+            species_temps[com_name]['how_many'].append(how_many)
     # Calculate averages for each species
     temperature_summary = {}
     for com_name, data in species_temps.items():
         temp_means = data['temp_means']
         temp_maxs = data['temp_maxs']
         temp_mins = data['temp_mins']
+        total_counts = data['how_many']
         
         if temp_means:
             avg_temp = sum(temp_means) / len(temp_means)
@@ -637,7 +642,8 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
                 'avg_temperature': round(avg_temp, 2),
                 'avg_max_temperature': round(avg_max, 2) if avg_max else None,
                 'avg_min_temperature': round(avg_min, 2) if avg_min else None,
-                'observation_count': len(temp_means)
+                'observation_count': sum(total_counts) if total_counts else 0
+                
             }
     
     return temperature_summary
