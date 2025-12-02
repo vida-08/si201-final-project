@@ -195,7 +195,7 @@ def grab_koeppen(latitude, longitude): #Kaz
                 'zone_description': climate_data.get('zone_description')
             }
         else:
-            print(f"No Koepp data found for coordinates ({latitude}, {longitude})")
+            print(f"No Koeppen data found for coordinates ({latitude}, {longitude})")
             return None
     except:
         print(f"Error calling Koeppen Climate API")
