@@ -498,25 +498,34 @@ def calc_total_observations(birds_database, location_list): #Kaz
     # Create placeholders for SQL IN clause
     placeholders = ','.join('?' * len(location_list))
     
-    # Query to count observations per bird species for the given locations
+    # Query to sum how_many per bird species for the given locations
     cur.execute(f"""
-        SELECT bo.com_name, bo.sci_name, COUNT(*) as observation_count
+        SELECT bo.com_name, bo.sci_name, SUM(bo.how_many) as total_counts, bo.obs_unix_timestamp
         FROM bird_observations bo
         JOIN locations l ON bo.location_id = l.id
         WHERE l.loc_name IN ({placeholders})
         GROUP BY bo.species_code, bo.com_name, bo.sci_name
-        ORDER BY observation_count DESC
+        ORDER BY total_counts DESC
     """, location_list)
     
     results = cur.fetchall()
     conn.close()
     
-    # Build dictionary with species names as keys and observation counts as values
+    # Build dictionary with species names as keys and total individuals as values
     observation_summary = {}
-    for common_name, scientific_name, count in results:
+    for common_name, scientific_name, total_counts, timestamp in results:
+
+        # Find earliest and latest observation dates for the species
+        start_date = min(row[3] for row in results if row[3] is not None)
+        end_date = max(row[3] for row in results if row[3] is not None)
+        start_date = datetime.utcfromtimestamp(int(start_date)).strftime('%Y-%m-%d')
+        end_date = datetime.utcfromtimestamp(int(end_date)).strftime('%Y-%m-%d')
+
         observation_summary[common_name] = {
             'scientific_name': scientific_name,
-            'total_observations': count
+            'total_observations': total_counts if total_counts is not None else 0,
+            'start_date': start_date,
+            'end_date': end_date
         }
     
     return observation_summary
@@ -530,7 +539,7 @@ def calc_climate_type_percentage(birds_database): #Vida
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT l.koeppen_geiger_zone, l.zone_description
+        SELECT l.koeppen_geiger_zone, l.zone_description, bo.how_many
         FROM bird_observations bo
         JOIN locations l
         ON bo.location_id = l.id
@@ -544,9 +553,10 @@ def calc_climate_type_percentage(birds_database): #Vida
         return {}
     
     climate_counts = {}
-    for code, description in rows:
+    for code, description, how_many in rows:
         readable_key = f"{code} ({description})"
-        climate_counts[readable_key] = climate_counts.get(readable_key, 0) + 1
+        count = how_many if how_many is not None else 0
+        climate_counts[readable_key] = climate_counts.get(readable_key, 0) + count
 
     total = sum(climate_counts.values())
 
@@ -635,7 +645,7 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
 
 
 # Data Visualization Functions: 
-def obs_summary_bar(observation_summary): #Vida
+def obs_summary_bar(observation_summary, loc_name): #Vida
     # Bar chart for total number of observations in the input location for each location by bird species'
     species = list(observation_summary.keys())
     counts = [] 
@@ -657,7 +667,8 @@ def obs_summary_bar(observation_summary): #Vida
 
     plt.xlabel("Total Observations", fontsize=12)
     plt.ylabel("Bird Species", fontsize=12)
-    plt.title("Total Bird Observations by Species", fontsize=14, pad=15)
+    plt.title(f"Total Bird Observations by Species in {loc_name}", fontsize=14, pad=15)
+    plt.suptitle(f"From {observation_summary[species[0]]['start_date']} to {observation_summary[species[0]]['end_date']}", fontsize=10, y=0.92)
 
     plt.xticks(rotation=90, ha='center', fontsize=8)
 
@@ -674,18 +685,20 @@ def climate_percentage_pie(climate_type_percentage): #Vida
     fig, ax = plt.subplots(figsize=(14, 8))
     ax.set_position([-0.15, 0.1, 1.0, 0.8])
 
+    short_labels = [label.split(' ')[0] for label in labels]
+
     wedges, texts, autotexts = ax.pie(
         sizes,
-        labels=None,
+        labels=short_labels,
         autopct='%1.1f%%',
         startangle=140,
         colors=colors,
-        textprops={'fontsize': 6}
+        textprops={'fontsize': 6},
     )
-
+    
     ax.legend(wedges, labels, title="Climate Types", loc="center left", bbox_to_anchor=(0.72, 0.5), fontsize=9)
 
-    plt.title("Percentage of Bird Observations by Climate Type")
+    plt.title("Percentage of Bird Observation Counts by Climate Type")
     plt.axis('equal')
     plt.show()
 
@@ -886,9 +899,16 @@ def main(): #Kaz
     print("\nClimate Type Percentage Calculated.")
     print(cliamte_percentage_dict)
 
+    # Historical Average Temperature Calculation
+    temperature_summary_dict = calc_historical_avg_temp(DB_NAME, input_queries['species'])
+    print("\nHistorical Average Temperature Summary Calculated.")
+    print(temperature_summary_dict)
+
     # Visualization
-    obs_summary_bar(observation_dict)
+    obs_summary_bar(observation_dict, input_queries['location'])
     climate_percentage_pie(cliamte_percentage_dict)
+    temp_history_scatter(temperature_summary_dict)
+    temp_range_bar(temperature_summary_dict)
     
     pass
 
