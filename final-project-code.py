@@ -732,6 +732,52 @@ def temp_history_scatter(temperature_summary): #Mizuki
     pass
 
 # Extra credit 1 -- Mizuki
+def temp_range_bar(temperature_summary): 
+    # Bar chart showing temperature range (min to max) for top species
+    # Input: temperature_summary dictionary from calc_historical_avg_temp
+    # Output: Displays bar chart with error bars
+    
+    if not temperature_summary:
+        print("No temperature data to visualize")
+        return
+    
+    # Sort by observation count and get top 15
+    sorted_species = sorted(temperature_summary.items(), 
+                           key=lambda x: x[1]['observation_count'], 
+                           reverse=True)[:15]
+    
+    species_names = []
+    avg_temps = []
+    min_temps = []
+    max_temps = []
+    
+    for sp, info in sorted_species:
+        species_names.append(sp[:20])  
+        avg_temps.append(info['avg_temperature'])
+        min_temps.append(info['avg_min_temperature'] if info['avg_min_temperature'] else info['avg_temperature'])
+        max_temps.append(info['avg_max_temperature'] if info['avg_max_temperature'] else info['avg_temperature'])
+    
+    plt.figure(figsize=(14, 8))
+    
+    x = range(len(species_names))
+    
+    # Calculate error bar values
+    lower_err = [avg - min_t for avg, min_t in zip(avg_temps, min_temps)]
+    upper_err = [max_t - avg for avg, max_t in zip(avg_temps, max_temps)]
+    
+    plt.bar(x, avg_temps, color='steelblue', alpha=0.8, edgecolor='black')
+    plt.errorbar(x, avg_temps, yerr=[lower_err, upper_err], 
+                fmt='none', color='darkred', capsize=5, capthick=2)
+    
+    plt.xticks(x, species_names, rotation=45, ha='right', fontsize=9)
+    plt.xlabel("Bird Species", fontsize=12)
+    plt.ylabel("Temperature (°C)", fontsize=12)
+    plt.title("Temperature Range at Observation Time (Top 15 Species)", fontsize=14, pad=15)
+    plt.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
+    
+    plt.tight_layout()
+    plt.show()
+    pass
 
 # Extra credit 2 -- Mizuki
 
