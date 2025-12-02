@@ -195,7 +195,7 @@ def grab_koeppen(latitude, longitude): #Kaz
                 'zone_description': climate_data.get('zone_description')
             }
         else:
-            print(f"No Koepp data found for coordinates ({latitude}, {longitude})")
+            print(f"No Koeppen data found for coordinates ({latitude}, {longitude})")
             return None
     except:
         print(f"Error calling Koeppen Climate API")
@@ -498,25 +498,34 @@ def calc_total_observations(birds_database, location_list): #Kaz
     # Create placeholders for SQL IN clause
     placeholders = ','.join('?' * len(location_list))
     
-    # Query to count observations per bird species for the given locations
+    # Query to sum how_many per bird species for the given locations
     cur.execute(f"""
-        SELECT bo.com_name, bo.sci_name, COUNT(*) as observation_count
+        SELECT bo.com_name, bo.sci_name, SUM(bo.how_many) as total_counts, bo.obs_unix_timestamp
         FROM bird_observations bo
         JOIN locations l ON bo.location_id = l.id
         WHERE l.loc_name IN ({placeholders})
         GROUP BY bo.species_code, bo.com_name, bo.sci_name
-        ORDER BY observation_count DESC
+        ORDER BY total_counts DESC
     """, location_list)
     
     results = cur.fetchall()
     conn.close()
     
-    # Build dictionary with species names as keys and observation counts as values
+    # Build dictionary with species names as keys and total individuals as values
     observation_summary = {}
-    for common_name, scientific_name, count in results:
+    for common_name, scientific_name, total_counts, timestamp in results:
+
+        # Find earliest and latest observation dates for the species
+        start_date = min(row[3] for row in results if row[3] is not None)
+        end_date = max(row[3] for row in results if row[3] is not None)
+        start_date = datetime.utcfromtimestamp(int(start_date)).strftime('%Y-%m-%d')
+        end_date = datetime.utcfromtimestamp(int(end_date)).strftime('%Y-%m-%d')
+
         observation_summary[common_name] = {
             'scientific_name': scientific_name,
-            'total_observations': count
+            'total_observations': total_counts if total_counts is not None else 0,
+            'start_date': start_date,
+            'end_date': end_date
         }
     
     return observation_summary
@@ -530,7 +539,7 @@ def calc_climate_type_percentage(birds_database): #Vida
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT l.koeppen_geiger_zone, l.zone_description
+        SELECT l.koeppen_geiger_zone, l.zone_description, bo.how_many
         FROM bird_observations bo
         JOIN locations l
         ON bo.location_id = l.id
@@ -544,9 +553,10 @@ def calc_climate_type_percentage(birds_database): #Vida
         return {}
     
     climate_counts = {}
-    for code, description in rows:
+    for code, description, how_many in rows:
         readable_key = f"{code} ({description})"
-        climate_counts[readable_key] = climate_counts.get(readable_key, 0) + 1
+        count = how_many if how_many is not None else 0
+        climate_counts[readable_key] = climate_counts.get(readable_key, 0) + count
 
     total = sum(climate_counts.values())
 
@@ -570,7 +580,8 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
         # Query for a specific species using JOIN
         cur.execute("""
             SELECT bo.com_name, bo.sci_name, 
-                   wd.temperature_mean, wd.temperature_max, wd.temperature_min
+                   wd.temperature_mean, wd.temperature_max, wd.temperature_min,
+                    bo.how_many
             FROM bird_observations bo
             JOIN weather_data wd ON bo.id = wd.bird_observation_id
             WHERE bo.com_name LIKE ?
@@ -579,7 +590,8 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
         # Query for all species using JOIN
         cur.execute("""
             SELECT bo.com_name, bo.sci_name, 
-                   wd.temperature_mean, wd.temperature_max, wd.temperature_min
+                   wd.temperature_mean, wd.temperature_max, wd.temperature_min,
+                    bo.how_many
             FROM bird_observations bo
             JOIN weather_data wd ON bo.id = wd.bird_observation_id
         """)
@@ -593,14 +605,15 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
     # Build dictionary to accumulate temperature data per species
     species_temps = {}
     for row in rows:
-        com_name, sci_name, temp_mean, temp_max, temp_min = row
+        com_name, sci_name, temp_mean, temp_max, temp_min, how_many = row
         
         if com_name not in species_temps:
             species_temps[com_name] = {
                 'scientific_name': sci_name,
                 'temp_means': [],
                 'temp_maxs': [],
-                'temp_mins': []
+                'temp_mins': [],
+                'how_many': []
             }
         
         if temp_mean is not None:
@@ -609,13 +622,15 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
             species_temps[com_name]['temp_maxs'].append(temp_max)
         if temp_min is not None:
             species_temps[com_name]['temp_mins'].append(temp_min)
-    
+        if how_many is not None:
+            species_temps[com_name]['how_many'].append(how_many)
     # Calculate averages for each species
     temperature_summary = {}
     for com_name, data in species_temps.items():
         temp_means = data['temp_means']
         temp_maxs = data['temp_maxs']
         temp_mins = data['temp_mins']
+        total_counts = data['how_many']
         
         if temp_means:
             avg_temp = sum(temp_means) / len(temp_means)
@@ -627,7 +642,8 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
                 'avg_temperature': round(avg_temp, 2),
                 'avg_max_temperature': round(avg_max, 2) if avg_max else None,
                 'avg_min_temperature': round(avg_min, 2) if avg_min else None,
-                'observation_count': len(temp_means)
+                'observation_count': sum(total_counts) if total_counts else 0
+                
             }
     
     return temperature_summary
@@ -635,7 +651,7 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
 
 
 # Data Visualization Functions: 
-def obs_summary_bar(observation_summary): #Vida
+def obs_summary_bar(observation_summary, loc_name): #Vida
     # Bar chart for total number of observations in the input location for each location by bird species'
     species = list(observation_summary.keys())
     counts = [] 
@@ -657,7 +673,8 @@ def obs_summary_bar(observation_summary): #Vida
 
     plt.xlabel("Total Observations", fontsize=12)
     plt.ylabel("Bird Species", fontsize=12)
-    plt.title("Total Bird Observations by Species", fontsize=14, pad=15)
+    plt.title(f"Total Bird Observations by Species in {loc_name}", fontsize=14, pad=15)
+    plt.suptitle(f"From {observation_summary[species[0]]['start_date']} to {observation_summary[species[0]]['end_date']}", fontsize=10, y=0.92)
 
     plt.xticks(rotation=90, ha='center', fontsize=8)
 
@@ -674,18 +691,20 @@ def climate_percentage_pie(climate_type_percentage): #Vida
     fig, ax = plt.subplots(figsize=(14, 8))
     ax.set_position([-0.15, 0.1, 1.0, 0.8])
 
+    short_labels = [label.split(' ')[0] for label in labels]
+
     wedges, texts, autotexts = ax.pie(
         sizes,
-        labels=None,
+        labels=short_labels,
         autopct='%1.1f%%',
         startangle=140,
         colors=colors,
-        textprops={'fontsize': 6}
+        textprops={'fontsize': 6},
     )
-
+    
     ax.legend(wedges, labels, title="Climate Types", loc="center left", bbox_to_anchor=(0.72, 0.5), fontsize=9)
 
-    plt.title("Percentage of Bird Observations by Climate Type")
+    plt.title("Percentage of Bird Observation Counts by Climate Type")
     plt.axis('equal')
     plt.show()
 
@@ -859,7 +878,7 @@ def generate_report(): #Mizuki
 def request_input_query(query_dict):
     # Request user input for location and species queries
     query_dict['location'] = input("Enter location (e.g., 'Ann Arbor, US'): ").strip()
-    query_dict['species'] = input("Enter bird species common name (e.g., 'Bald Eagle'): ").strip()
+    query_dict['species'] = input("Enter bird species common name (e.g., 'Bald Eagle') (enter NONE input for all species): ").strip()
 
     return query_dict
 
@@ -887,54 +906,65 @@ def main(): #Kaz
     # Input: None
     # Output: None
     
-    # Get region code from user input
-    region_code = input("Enter region code (e.g., 'US', 'CA', 'GB'): ").strip().upper()
-    if not region_code:
-        region_code = "US"  # Default to US if no input
-        print(f"No region code provided. Using default: {region_code}")
-    
-    bird_data = call_bird_api(region_code)
-    
-    print("\nCreating database...")
-    db_path = create_bird_database(bird_data)
 
-    if db_path:
-        print(f"Database created successfully at: {db_path}")
+    update_yn = input("Do you want to update the bird database with new observations? (y/n): ").strip().lower()
+    
+    if update_yn == 'y':
+
+        # Get region code from user input
+        region_code = input("Enter region code (e.g., 'US', 'CA', 'GB'): ").strip().upper()
+        if not region_code:
+            region_code = "US"  # Default to US if no input
+            print(f"No region code provided. Using default: {region_code}")
+        
+        bird_data = call_bird_api(region_code)
+        
+        print("\nCreating database...")
+        db_path = create_bird_database(bird_data)
+
+        if db_path:
+            print(f"Database created successfully at: {db_path}")
+        else:
+            print("Failed to create bird database")
+
+        # Additional check: count rows to confirm insertion
+        try:
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+
+            # Count rows in locations table
+            cur.execute("SELECT COUNT(*) FROM locations")
+            loc_count = cur.fetchone()[0]
+
+            # Count rows in bird_observations table
+            cur.execute("SELECT COUNT(*) FROM bird_observations")
+            obs_count = cur.fetchone()[0]
+
+            print(f"\nDatabase check:")
+            print(f"-Locations table contains: {loc_count} rows")
+            print(f"-Bird observations table contains: {obs_count} rows")
+
+            conn.close()
+
+        except Exception as e:
+            print(f"Error verifying database: {e}")
+        
+        target_X = input("Enter target number of unique locations to load (default 120): ").strip()
+        # loop until we have X rows for location table
+        print("Loading bird data until target unique locations are reached...")
+        load_until_target(region=region_code, target=int(target_X))
+        print("Done!")
+
+        print("Loading weather data for all observations...")
+        weather_until_complete()
+        print("Done!")
+
+        print("Building reports and visualizations...")
+
     else:
-        print("Failed to create bird database")
+        print("Skipping database update.")
+        db_path = DB_NAME
 
-    # Additional check: count rows to confirm insertion
-    try:
-        conn = sqlite3.connect(db_path)
-        cur = conn.cursor()
-
-        # Count rows in locations table
-        cur.execute("SELECT COUNT(*) FROM locations")
-        loc_count = cur.fetchone()[0]
-
-        # Count rows in bird_observations table
-        cur.execute("SELECT COUNT(*) FROM bird_observations")
-        obs_count = cur.fetchone()[0]
-
-        print(f"\nDatabase check:")
-        print(f"-Locations table contains: {loc_count} rows")
-        print(f"-Bird observations table contains: {obs_count} rows")
-
-        conn.close()
-
-    except Exception as e:
-        print(f"Error verifying database: {e}")
-    
-    # loop until we have 120 rows for location table
-    print("Loading bird data until 120 unique locations are reached...")
-    load_until_target(region=region_code, target=120)
-    print("Done!")
-
-    print("Loading weather data for all observations...")
-    weather_until_complete()
-    print("Done!")
-
-    print("Building reports and visualizations...")
     input_queries = {}
     request_input_query(input_queries)
 
@@ -953,9 +983,16 @@ def main(): #Kaz
     print("\nClimate Type Percentage Calculated.")
     print(cliamte_percentage_dict)
 
+    # Historical Average Temperature Calculation
+    temperature_summary_dict = calc_historical_avg_temp(DB_NAME, input_queries['species'])
+    print("\nHistorical Average Temperature Summary Calculated.")
+    print(temperature_summary_dict)
+
     # Visualization
-    obs_summary_bar(observation_dict)
+    obs_summary_bar(observation_dict, input_queries['location'])
     climate_percentage_pie(cliamte_percentage_dict)
+    temp_history_scatter(temperature_summary_dict)
+    temp_range_bar(temperature_summary_dict)
     
     pass
 
