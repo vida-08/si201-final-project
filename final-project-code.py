@@ -869,10 +869,102 @@ def climate_temp_heatmap(birds_database):
     pass
 
 
-def generate_report(): #Mizuki
+def generate_report(observation_summary, temperature_summary, climate_percentage, db_name=DB_NAME): #Mizuki
     # Combine all calculations and visualizations into a single formatted document
-    # Input: All computed summaries, saved images from visualization
+    # Input: All computed summaries from calculations
+    # Output: Text file with all calculations written out
     
+    output_dir = os.path.dirname(db_name)
+    if not output_dir:
+        output_dir = BASE_DIR
+    
+    report_path = os.path.join(output_dir, 'calculation_results.txt')
+    
+    with open(report_path, 'w') as f:
+        f.write("=" * 70 + "\n")
+        f.write("SI 201 Final Project - Calculation Results\n")
+        f.write("Team VMK: Weijian Fan (Vida), Kawani Mumtaz, Mizuki Kuno\n")
+        f.write("=" * 70 + "\n\n")
+        
+        # Section 1: Observation Summary
+        f.write("-" * 50 + "\n")
+        f.write("SECTION 1: BIRD OBSERVATION COUNTS BY SPECIES\n")
+        f.write("-" * 50 + "\n\n")
+        
+        if observation_summary:
+            sorted_obs = sorted(observation_summary.items(), 
+                              key=lambda x: x[1]['total_observations'], 
+                              reverse=True)
+            
+            f.write(f"{'Common Name':<35} {'Scientific Name':<35} {'Count'}\n")
+            f.write("-" * 80 + "\n")
+            
+            for common_name, data in sorted_obs:
+                f.write(f"{common_name:<35} {data['scientific_name']:<35} {data['total_observations']}\n")
+            
+            total_species = len(observation_summary)
+            total_obs = sum(d['total_observations'] for d in observation_summary.values())
+            f.write(f"\nTotal unique species: {total_species}\n")
+            f.write(f"Total observations: {total_obs}\n")
+        else:
+            f.write("No observation data available.\n")
+        
+        f.write("\n")
+        
+        # Section 2: Temperature Analysis
+        f.write("-" * 50 + "\n")
+        f.write("SECTION 2: TEMPERATURE ANALYSIS BY SPECIES\n")
+        f.write("-" * 50 + "\n\n")
+        
+        if temperature_summary:
+            sorted_temp = sorted(temperature_summary.items(), 
+                               key=lambda x: x[1]['observation_count'], 
+                               reverse=True)
+            
+            f.write(f"{'Species':<30} {'Avg Temp(°C)':<15} {'Min(°C)':<12} {'Max(°C)':<12} {'Observations'}\n")
+            f.write("-" * 85 + "\n")
+            
+            for species, data in sorted_temp:
+                avg_temp = f"{data['avg_temperature']:.1f}" if data['avg_temperature'] else "N/A"
+                min_temp = f"{data['avg_min_temperature']:.1f}" if data['avg_min_temperature'] else "N/A"
+                max_temp = f"{data['avg_max_temperature']:.1f}" if data['avg_max_temperature'] else "N/A"
+                f.write(f"{species[:29]:<30} {avg_temp:<15} {min_temp:<12} {max_temp:<12} {data['observation_count']}\n")
+            
+            # Calculate overall statistics
+            all_temps = [d['avg_temperature'] for d in temperature_summary.values() if d['avg_temperature']]
+            if all_temps:
+                overall_avg = sum(all_temps) / len(all_temps)
+                f.write(f"\nOverall average temperature: {overall_avg:.2f}°C\n")
+        else:
+            f.write("No temperature data available.\n")
+        
+        f.write("\n")
+        
+        # Section 3: Climate Zone Analysis
+        f.write("-" * 50 + "\n")
+        f.write("SECTION 3: CLIMATE ZONE DISTRIBUTION\n")
+        f.write("-" * 50 + "\n\n")
+        
+        if climate_percentage:
+            sorted_climate = sorted(climate_percentage.items(), 
+                                  key=lambda x: x[1], 
+                                  reverse=True)
+            
+            f.write(f"{'Climate Zone':<40} {'Percentage'}\n")
+            f.write("-" * 55 + "\n")
+            
+            for zone, percentage in sorted_climate:
+                f.write(f"{zone:<40} {percentage:.2f}%\n")
+        else:
+            f.write("No climate zone data available.\n")
+        
+        f.write("\n")
+        f.write("=" * 70 + "\n")
+        f.write("END OF REPORT\n")
+        f.write("=" * 70 + "\n")
+    
+    print(f"Report saved to: {report_path}")
+    return report_path
     pass
 
 def request_input_query(query_dict):
