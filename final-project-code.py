@@ -566,6 +566,14 @@ def calc_climate_type_percentage(birds_database): #Vida
         percentage = (count / total) * 100
         climate_percentages[climate] = round(percentage, 2)
 
+    # Adjust for rounding errors to ensure sum equals exactly 100
+    if climate_percentages:
+        current_sum = sum(climate_percentages.values())
+        diff = round(100 - current_sum, 2)
+        if diff != 0:
+            last_key = list(climate_percentages.keys())[-1]
+            climate_percentages[last_key] = round(climate_percentages[last_key] + diff, 2)
+
     return climate_percentages
     pass
 
@@ -1108,9 +1116,9 @@ class TestCases(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    main()
+    # main()
     
     # Uncomment to run unit tests instead
-    # unittest.main(verbosity=2)
+    unittest.main(verbosity=2)
 
 
