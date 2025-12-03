@@ -1071,9 +1071,9 @@ def main(): #Kaz
     print(observation_dict)
 
     # Climate Type Summary Calculation
-    cliamte_percentage_dict = calc_climate_type_percentage(DB_NAME)
+    climate_percentage_dict = calc_climate_type_percentage(DB_NAME)
     print("\nClimate Type Percentage Calculated.")
-    print(cliamte_percentage_dict)
+    print(climate_percentage_dict)
 
     # Historical Average Temperature Calculation
     temperature_summary_dict = calc_historical_avg_temp(DB_NAME, input_queries['species'])
@@ -1082,10 +1082,13 @@ def main(): #Kaz
 
     # Visualization
     obs_summary_bar(observation_dict, input_queries['location'])
-    climate_percentage_pie(cliamte_percentage_dict)
+    climate_percentage_pie(climate_percentage_dict)
     temp_history_scatter(temperature_summary_dict)
     temp_range_bar(temperature_summary_dict)
     climate_temp_heatmap(DB_NAME)
+
+    # Generate report
+    generate_report(observation_dict, temperature_summary_dict, climate_percentage_dict, DB_NAME)
     
     pass
 
