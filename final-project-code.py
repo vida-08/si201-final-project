@@ -695,8 +695,8 @@ def obs_summary_bar(observation_summary, loc_name): #Vida
         palette="viridis"
     )
 
-    plt.xlabel("Total Observations", fontsize=12)
-    plt.ylabel("Bird Species", fontsize=12)
+    plt.xlabel("Bird Species", fontsize=12)
+    plt.ylabel("Total Observations", fontsize=12)
     plt.title(f"Total Bird Observations by Species in {loc_name} (Top 80 Species)", fontsize=14, pad=15)
     plt.suptitle(f"From {observation_summary[species[0]]['start_date']} to {observation_summary[species[0]]['end_date']}", fontsize=10, y=0.92)
 
