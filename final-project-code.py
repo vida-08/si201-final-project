@@ -387,7 +387,7 @@ def weather_until_complete(db_name=DB_NAME, max_rows_per_run=20):
                 LIMIT ?
             """, (max_rows_per_run,))
         except:
-            # If weather_data table doesn't exist, select all bird observations
+            # If weather_data table doesn't exist, select all bird observations (up to max_rows_per_run)
             cur.execute("""
                 SELECT bo.id, l.latitude, l.longitude, bo.obs_unix_timestamp
                 FROM bird_observations bo
@@ -904,7 +904,7 @@ def climate_temp_heatmap(birds_database):
     pass
 
 
-def generate_report(observation_summary, temperature_summary, climate_percentage, db_name=DB_NAME): #Mizuki
+def generate_report(observation_summary, temperature_summary, climate_percentage, db_name=DB_NAME, location=None): #Mizuki
     # Combine all calculations and visualizations into a single formatted document
     # Input: All computed summaries from calculations
     # Output: Text file with all calculations written out
@@ -914,6 +914,13 @@ def generate_report(observation_summary, temperature_summary, climate_percentage
         output_dir = BASE_DIR
     
     report_path = os.path.join(output_dir, 'calculation_results.txt')
+
+    start_date = None
+    end_date = None
+    if observation_summary:
+        first_species = next(iter(observation_summary.values()))
+        start_date = first_species.get('start_date', 'N/A')
+        end_date = first_species.get('end_date', 'N/A')
     
     with open(report_path, 'w') as f:
         f.write("=" * 70 + "\n")
@@ -924,6 +931,7 @@ def generate_report(observation_summary, temperature_summary, climate_percentage
         # Section 1: Observation Summary
         f.write("-" * 50 + "\n")
         f.write("SECTION 1: BIRD OBSERVATION COUNTS BY SPECIES\n")
+        f.write(f"For location: {location} between {start_date} to {end_date}\n")
         f.write("-" * 50 + "\n\n")
         
         if observation_summary:
@@ -949,6 +957,7 @@ def generate_report(observation_summary, temperature_summary, climate_percentage
         # Section 2: Temperature Analysis
         f.write("-" * 50 + "\n")
         f.write("SECTION 2: TEMPERATURE ANALYSIS BY SPECIES\n")
+        f.write(f"Between {start_date} to {end_date}\n")
         f.write("-" * 50 + "\n\n")
         
         if temperature_summary:
@@ -978,6 +987,7 @@ def generate_report(observation_summary, temperature_summary, climate_percentage
         # Section 3: Climate Zone Analysis
         f.write("-" * 50 + "\n")
         f.write("SECTION 3: CLIMATE ZONE DISTRIBUTION\n")
+        f.write(f"Between {climate_percentage.get('start_date', 'N/A')} to {climate_percentage.get('end_date', 'N/A')}\n")
         f.write("-" * 50 + "\n\n")
         
         if climate_percentage and 'percentages' in climate_percentage:
@@ -1124,7 +1134,7 @@ def main(): #Kaz
     climate_temp_heatmap(DB_NAME)
 
     # Generate report
-    generate_report(observation_dict, temperature_summary_dict, climate_percentage_dict, DB_NAME)
+    generate_report(observation_dict, temperature_summary_dict, climate_percentage_dict, DB_NAME, input_queries['location'])
     
     pass
 

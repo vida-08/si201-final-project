@@ -5,6 +5,7 @@ Team VMK: Weijian Fan (Vida), Kawani Mumtaz, Mizuki Kuno
 
 --------------------------------------------------
 SECTION 1: BIRD OBSERVATION COUNTS BY SPECIES
+For location: Michigan between 2025-11-29 to 2025-12-03
 --------------------------------------------------
 
 Common Name                         Scientific Name                     Count
@@ -43,6 +44,7 @@ Total observations: 197
 
 --------------------------------------------------
 SECTION 2: TEMPERATURE ANALYSIS BY SPECIES
+Between 2025-11-29 to 2025-12-03
 --------------------------------------------------
 
 Species                        Avg Temp(°C)    Min(°C)      Max(°C)      Observations
@@ -445,6 +447,7 @@ Overall average temperature: 11.28°C
 
 --------------------------------------------------
 SECTION 3: CLIMATE ZONE DISTRIBUTION
+Between 2025-11-29 to 2025-12-03
 --------------------------------------------------
 
 Climate Zone                             Percentage
