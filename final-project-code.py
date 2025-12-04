@@ -671,12 +671,18 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
 # Data Visualization Functions: 
 def obs_summary_bar(observation_summary, loc_name): #Vida
     # Bar chart for total number of observations in the input location for each location by bird species'
+    if not loc_name:
+        loc_name = 'US'
+
     species = list(observation_summary.keys())
     counts = [] 
     for sp in observation_summary:
         info = observation_summary[sp]
         count = info['total_observations']
         counts.append(count)
+    
+    species = species[:80]
+    counts = counts[:80]
     
     plt.figure(figsize=(14, 8))
 
@@ -691,7 +697,7 @@ def obs_summary_bar(observation_summary, loc_name): #Vida
 
     plt.xlabel("Total Observations", fontsize=12)
     plt.ylabel("Bird Species", fontsize=12)
-    plt.title(f"Total Bird Observations by Species in {loc_name}", fontsize=14, pad=15)
+    plt.title(f"Total Bird Observations by Species in {loc_name} (Top 80 Species)", fontsize=14, pad=15)
     plt.suptitle(f"From {observation_summary[species[0]]['start_date']} to {observation_summary[species[0]]['end_date']}", fontsize=10, y=0.92)
 
     plt.xticks(rotation=90, ha='center', fontsize=8)
