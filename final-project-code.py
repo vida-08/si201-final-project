@@ -710,7 +710,7 @@ def climate_percentage_pie(climate_type_percentage): #Vida
         textprops={'fontsize': 6},
     )
     
-    ax.legend(wedges, labels, title="Climate Types", loc="center left", bbox_to_anchor=(0.72, 0.5), fontsize=9)
+    ax.legend(wedges, labels, title="Climate Types", loc="center left", bbox_to_anchor=(0.80, 0.5), fontsize=9)
 
     plt.title("Percentage of Bird Observation Counts by Climate Type")
     plt.axis('equal')
@@ -1116,9 +1116,9 @@ class TestCases(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    # main()
+    main()
     
     # Uncomment to run unit tests instead
-    unittest.main(verbosity=2)
+    # unittest.main(verbosity=2)
 
 
