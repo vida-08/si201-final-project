@@ -539,7 +539,7 @@ def calc_climate_type_percentage(birds_database): #Vida
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT l.koeppen_geiger_zone, l.zone_description, bo.how_many
+        SELECT l.koeppen_geiger_zone, l.zone_description, bo.how_many, bo.obs_unix_timestamp
         FROM bird_observations bo
         JOIN locations l
         ON bo.location_id = l.id
@@ -552,8 +552,14 @@ def calc_climate_type_percentage(birds_database): #Vida
     if not rows:
         return {}
     
+    # Get start and end dates
+    start_date = min(row[3] for row in rows if row[3] is not None)
+    end_date = max(row[3] for row in rows if row[3] is not None)
+    start_date = datetime.utcfromtimestamp(int(start_date)).strftime('%Y-%m-%d')
+    end_date = datetime.utcfromtimestamp(int(end_date)).strftime('%Y-%m-%d')
+    
     climate_counts = {}
-    for code, description, how_many in rows:
+    for code, description, how_many, timestamp in rows:
         readable_key = f"{code} ({description})"
         count = how_many if how_many is not None else 0
         climate_counts[readable_key] = climate_counts.get(readable_key, 0) + count
@@ -566,15 +572,11 @@ def calc_climate_type_percentage(birds_database): #Vida
         percentage = (count / total) * 100
         climate_percentages[climate] = round(percentage, 2)
 
-    # Adjust for rounding errors to ensure sum equals exactly 100
-    if climate_percentages:
-        current_sum = sum(climate_percentages.values())
-        diff = round(100 - current_sum, 2)
-        if diff != 0:
-            last_key = list(climate_percentages.keys())[-1]
-            climate_percentages[last_key] = round(climate_percentages[last_key] + diff, 2)
-
-    return climate_percentages
+    return {
+        'percentages': climate_percentages,
+        'start_date': start_date,
+        'end_date': end_date
+    }
     pass
 
 
@@ -589,7 +591,7 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
         cur.execute("""
             SELECT bo.com_name, bo.sci_name, 
                    wd.temperature_mean, wd.temperature_max, wd.temperature_min,
-                    bo.how_many
+                    bo.how_many, bo.obs_unix_timestamp
             FROM bird_observations bo
             JOIN weather_data wd ON bo.id = wd.bird_observation_id
             WHERE bo.com_name LIKE ?
@@ -599,7 +601,7 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
         cur.execute("""
             SELECT bo.com_name, bo.sci_name, 
                    wd.temperature_mean, wd.temperature_max, wd.temperature_min,
-                    bo.how_many
+                    bo.how_many, bo.obs_unix_timestamp
             FROM bird_observations bo
             JOIN weather_data wd ON bo.id = wd.bird_observation_id
         """)
@@ -610,10 +612,16 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
     if not rows:
         return {}
     
+    # Get start and end dates
+    start_date = min(row[6] for row in rows if row[6] is not None)
+    end_date = max(row[6] for row in rows if row[6] is not None)
+    start_date = datetime.utcfromtimestamp(int(start_date)).strftime('%Y-%m-%d')
+    end_date = datetime.utcfromtimestamp(int(end_date)).strftime('%Y-%m-%d')
+    
     # Build dictionary to accumulate temperature data per species
     species_temps = {}
     for row in rows:
-        com_name, sci_name, temp_mean, temp_max, temp_min, how_many = row
+        com_name, sci_name, temp_mean, temp_max, temp_min, how_many, timestamp = row
         
         if com_name not in species_temps:
             species_temps[com_name] = {
@@ -650,7 +658,9 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
                 'avg_temperature': round(avg_temp, 2),
                 'avg_max_temperature': round(avg_max, 2) if avg_max else None,
                 'avg_min_temperature': round(avg_min, 2) if avg_min else None,
-                'observation_count': sum(total_counts) if total_counts else 0
+                'observation_count': sum(total_counts) if total_counts else 0,
+                'start_date': start_date,
+                'end_date': end_date
                 
             }
     
@@ -692,8 +702,12 @@ def obs_summary_bar(observation_summary, loc_name): #Vida
 
 def climate_percentage_pie(climate_type_percentage): #Vida
     # Pie chart for percentage of observations of climate zone for each bird species
-    labels = list(climate_type_percentage.keys())
-    sizes = list(climate_type_percentage.values())
+    percentages = climate_type_percentage.get('percentages', {})
+    start_date = climate_type_percentage.get('start_date', 'N/A')
+    end_date = climate_type_percentage.get('end_date', 'N/A')
+    
+    labels = list(percentages.keys())
+    sizes = list(percentages.values())
     colors = sns.color_palette("Set3", n_colors=len(labels))
 
     fig, ax = plt.subplots(figsize=(14, 8))
@@ -713,6 +727,7 @@ def climate_percentage_pie(climate_type_percentage): #Vida
     ax.legend(wedges, labels, title="Climate Types", loc="center left", bbox_to_anchor=(0.72, 0.5), fontsize=9)
 
     plt.title("Percentage of Bird Observation Counts by Climate Type")
+    plt.suptitle(f"From {start_date} to {end_date}", fontsize=8, y=0.96, x=0.5)
     plt.axis('equal')
     plt.show()
 
@@ -730,11 +745,16 @@ def temp_history_scatter(temperature_summary): #Mizuki
     species = list(temperature_summary.keys())
     avg_temps = []
     obs_counts = []
+    start_date = None
+    end_date = None
     
     for sp in temperature_summary:
         info = temperature_summary[sp]
         avg_temps.append(info['avg_temperature'])
         obs_counts.append(info['observation_count'])
+        if start_date is None:
+            start_date = info.get('start_date', 'N/A')
+            end_date = info.get('end_date', 'N/A')
     
     plt.figure(figsize=(12, 8))
     
@@ -753,6 +773,7 @@ def temp_history_scatter(temperature_summary): #Mizuki
     plt.xlabel("Average Temperature (°C)", fontsize=12)
     plt.ylabel("Number of Observations", fontsize=12)
     plt.title("Bird Species: Average Temperature vs Observation Count", fontsize=14, pad=15)
+    plt.suptitle(f"From {start_date} to {end_date}", fontsize=10, y=0.98)
     
     plt.tight_layout()
     plt.show()
@@ -777,12 +798,17 @@ def temp_range_bar(temperature_summary):
     avg_temps = []
     min_temps = []
     max_temps = []
+    start_date = None
+    end_date = None
     
     for sp, info in sorted_species:
         species_names.append(sp[:20])  
         avg_temps.append(info['avg_temperature'])
         min_temps.append(info['avg_min_temperature'] if info['avg_min_temperature'] else info['avg_temperature'])
         max_temps.append(info['avg_max_temperature'] if info['avg_max_temperature'] else info['avg_temperature'])
+        if start_date is None:
+            start_date = info.get('start_date', 'N/A')
+            end_date = info.get('end_date', 'N/A')
     
     plt.figure(figsize=(14, 8))
     
@@ -800,6 +826,7 @@ def temp_range_bar(temperature_summary):
     plt.xlabel("Bird Species", fontsize=12)
     plt.ylabel("Temperature (°C)", fontsize=12)
     plt.title("Temperature Range at Observation Time (Top 15 Species)", fontsize=14, pad=15)
+    plt.suptitle(f"From {start_date} to {end_date}", fontsize=10, y=0.98)
     plt.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
     
     plt.tight_layout()
@@ -953,8 +980,9 @@ def generate_report(observation_summary, temperature_summary, climate_percentage
         f.write("SECTION 3: CLIMATE ZONE DISTRIBUTION\n")
         f.write("-" * 50 + "\n\n")
         
-        if climate_percentage:
-            sorted_climate = sorted(climate_percentage.items(), 
+        if climate_percentage and 'percentages' in climate_percentage:
+            percentages = climate_percentage['percentages']
+            sorted_climate = sorted(percentages.items(), 
                                   key=lambda x: x[1], 
                                   reverse=True)
             
@@ -1116,9 +1144,8 @@ class TestCases(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    # main()
+    main()
     
     # Uncomment to run unit tests instead
-    unittest.main(verbosity=2)
-
+    # unittest.main(verbosity=2)
 
