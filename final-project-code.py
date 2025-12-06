@@ -766,7 +766,7 @@ def climate_percentage_pie(climate_type_percentage): #Vida
     
     ax.legend(wedges, labels, title="Climate Types (Top 4 + Others)", loc="center left", bbox_to_anchor=(0.80, 0.5), fontsize=9)
 
-    plt.title("Percentage of Bird Observation Counts by Climate Type", loc="center")
+    plt.title("Percentage of Bird Observation Counts by Climate Type")
     plt.suptitle(f"From {start_date} to {end_date}", fontsize=8, y=0.96, x=0.5)
     plt.axis('equal')
     plt.show()
