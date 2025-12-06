@@ -223,25 +223,35 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
     # Inputs: data from API
     # Outputs: database connections or paths
 
-    # Creates 2 tables that share an integer key:
-    #   1. locations
-    #   2. bird_observations
+    # Creates 3 tables that share integer keys:
+    #   1. koeppen_zones
+    #   2. locations (references koeppen_zones)
+    #   3. bird_observations (references locations)
     conn = sqlite3.connect(db_name)
     cur = conn.cursor()
 
-    # TABLE 1: LOCATIONS
+    # TABLE 1: KOEPPEN ZONES
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS koeppen_zones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            koeppen_geiger_zone TEXT UNIQUE,
+            zone_description TEXT
+        )
+    """)
+
+    # TABLE 2: LOCATIONS
     cur.execute("""
         CREATE TABLE IF NOT EXISTS locations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             loc_name TEXT UNIQUE,
             latitude REAL,
             longitude REAL,
-            koeppen_geiger_zone TEXT,
-            zone_description TEXT
+            koeppen_id INTEGER,
+            FOREIGN KEY(koeppen_id) REFERENCES koeppen_zones(id)
         )
     """)
 
-    # TABLE 2: BIRD OBSERVATIONS
+    # TABLE 3: BIRD OBSERVATIONS
     cur.execute("""
         CREATE TABLE IF NOT EXISTS bird_observations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -284,11 +294,28 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
         koeppen_zone = koeppen_data.get('koeppen_zone') if koeppen_data else None
         zone_desc = koeppen_data.get('zone_description') if koeppen_data else None
 
+        # Insert Köppen zone into koeppen_zones table (will be ignored if zone already exists)
+        koeppen_id = None
+        if koeppen_zone:
+            cur.execute("""
+            INSERT OR IGNORE INTO koeppen_zones (koeppen_geiger_zone, zone_description)
+            VALUES (?, ?)
+            """, (koeppen_zone, zone_desc))
+
+            # Retrieve koeppen_id
+            cur.execute("""
+                SELECT id FROM koeppen_zones
+                WHERE koeppen_geiger_zone = ?
+            """, (koeppen_zone,))
+            row = cur.fetchone()
+            if row:
+                koeppen_id = row[0]
+
         # Insert location (will be ignored if loc_name already exists)
         cur.execute("""
-        INSERT OR IGNORE INTO locations (loc_name, latitude, longitude, koeppen_geiger_zone, zone_description)
-        VALUES (?, ?, ?, ?, ?)
-        """, (loc_name, lat, lon, koeppen_zone, zone_desc))
+        INSERT OR IGNORE INTO locations (loc_name, latitude, longitude, koeppen_id)
+        VALUES (?, ?, ?, ?)
+        """, (loc_name, lat, lon, koeppen_id))
 
         # Retrieve location_id by loc_name
         cur.execute("""
@@ -539,11 +566,11 @@ def calc_climate_type_percentage(birds_database): #Vida
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT l.koeppen_geiger_zone, l.zone_description, bo.how_many, bo.obs_unix_timestamp
+        SELECT kz.koeppen_geiger_zone, kz.zone_description, bo.how_many, bo.obs_unix_timestamp
         FROM bird_observations bo
-        JOIN locations l
-        ON bo.location_id = l.id
-        WHERE l.koeppen_geiger_zone IS NOT NULL
+        JOIN locations l ON bo.location_id = l.id
+        JOIN koeppen_zones kz ON l.koeppen_id = kz.id
+        WHERE kz.koeppen_geiger_zone IS NOT NULL
     """)
 
     rows = cur.fetchall()
@@ -849,7 +876,7 @@ def climate_temp_heatmap(birds_database):
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT l.koeppen_geiger_zone,
+        SELECT kz.koeppen_geiger_zone,
                CASE 
                    WHEN wd.temperature_mean < 0 THEN 'Below 0°C'
                    WHEN wd.temperature_mean < 10 THEN '0-10°C'
@@ -860,9 +887,10 @@ def climate_temp_heatmap(birds_database):
                COUNT(*) as count
         FROM bird_observations bo
         JOIN locations l ON bo.location_id = l.id
+        JOIN koeppen_zones kz ON l.koeppen_id = kz.id
         JOIN weather_data wd ON bo.id = wd.bird_observation_id
-        WHERE l.koeppen_geiger_zone IS NOT NULL AND wd.temperature_mean IS NOT NULL
-        GROUP BY l.koeppen_geiger_zone, temp_range
+        WHERE kz.koeppen_geiger_zone IS NOT NULL AND wd.temperature_mean IS NOT NULL
+        GROUP BY kz.koeppen_geiger_zone, temp_range
     """)
     
     rows = cur.fetchall()
