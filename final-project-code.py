@@ -739,9 +739,15 @@ def climate_percentage_pie(climate_type_percentage): #Vida
     percentages = climate_type_percentage.get('percentages', {})
     start_date = climate_type_percentage.get('start_date', 'N/A')
     end_date = climate_type_percentage.get('end_date', 'N/A')
+
+    sorted_items = sorted(percentages.items(), key=lambda x: x[1], reverse=True)
+    top4 = sorted_items[:4]
+    if len(sorted_items) > 4:
+        others_total = sum(val for _, val in sorted_items[4:])
+        top4.append(("Others", round(others_total, 2)))
     
-    labels = list(percentages.keys())
-    sizes = list(percentages.values())
+    labels = [item[0] for item in top4]
+    sizes = [item[1] for item in top4]
     colors = sns.color_palette("Set3", n_colors=len(labels))
 
     fig, ax = plt.subplots(figsize=(14, 8))
@@ -755,12 +761,12 @@ def climate_percentage_pie(climate_type_percentage): #Vida
         autopct='%1.1f%%',
         startangle=140,
         colors=colors,
-        textprops={'fontsize': 6},
+        textprops={'fontsize': 9},
     )
     
-    ax.legend(wedges, labels, title="Climate Types", loc="center left", bbox_to_anchor=(0.80, 0.5), fontsize=9)
+    ax.legend(wedges, labels, title="Climate Types (Top 4 + Others)", loc="center left", bbox_to_anchor=(0.80, 0.5), fontsize=9)
 
-    plt.title("Percentage of Bird Observation Counts by Climate Type")
+    plt.title("Percentage of Bird Observation Counts by Climate Type", loc="center")
     plt.suptitle(f"From {start_date} to {end_date}", fontsize=8, y=0.96, x=0.5)
     plt.axis('equal')
     plt.show()
