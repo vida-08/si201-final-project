@@ -708,8 +708,8 @@ def obs_summary_bar(observation_summary, loc_name): #Vida
         count = info['total_observations']
         counts.append(count)
     
-    species = species[:80]
-    counts = counts[:80]
+    species = species[:15]
+    counts = counts[:15]
     
     plt.figure(figsize=(14, 8))
 
@@ -724,14 +724,15 @@ def obs_summary_bar(observation_summary, loc_name): #Vida
 
     plt.xlabel("Bird Species", fontsize=12)
     plt.ylabel("Total Observations", fontsize=12)
-    plt.title(f"Total Bird Observations by Species in {loc_name} (Top 80 Species)", fontsize=14, pad=15)
+    plt.title(f"Total Bird Observations by Species in {loc_name} (Top 15 Species)", fontsize=14, pad=15)
     plt.suptitle(f"From {observation_summary[species[0]]['start_date']} to {observation_summary[species[0]]['end_date']}", fontsize=10, y=0.92)
 
-    plt.xticks(rotation=90, ha='center', fontsize=8)
+    plt.xticks(rotation= 25, ha='center', fontsize=8)
 
     plt.tight_layout()
     plt.show()
     pass
+
 
 def climate_percentage_pie(climate_type_percentage): #Vida
     # Pie chart for percentage of observations of climate zone for each bird species
