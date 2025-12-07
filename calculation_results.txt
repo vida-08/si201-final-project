@@ -5,329 +5,49 @@ Team VMK: Weijian Fan (Vida), Kawani Mumtaz, Mizuki Kuno
 
 --------------------------------------------------
 SECTION 1: BIRD OBSERVATION COUNTS BY SPECIES
-For location: Michigan between 2025-12-05 to 2025-12-05
+For location: michigan between 2025-12-07 to 2025-12-07
 --------------------------------------------------
 
 Common Name                         Scientific Name                     Count
 --------------------------------------------------------------------------------
-Tundra Swan                         Cygnus columbianus                  50
-Pine Grosbeak                       Pinicola enucleator                 6
-Wild Turkey                         Meleagris gallopavo                 6
-Horned Lark                         Eremophila alpestris                4
-Fox Sparrow                         Passerella iliaca                   1
-Mute Swan                           Cygnus olor                         0
+Bohemian Waxwing                    Bombycilla garrulus                 70
+European Starling                   Sturnus vulgaris                    11
+Northern Cardinal                   Cardinalis cardinalis               5
+American Goldfinch                  Spinus tristis                      4
+White-winged Crossbill              Loxia leucoptera                    3
+Canvasback                          Aythya valisineria                  2
+Hairy Woodpecker                    Leuconotopicus villosus             1
+Pileated Woodpecker                 Dryocopus pileatus                  1
+Pine Siskin                         Spinus pinus                        1
+Red-breasted Nuthatch               Sitta canadensis                    1
 
-Total unique species: 6
-Total observations: 67
+Total unique species: 10
+Total observations: 99
 
 --------------------------------------------------
 SECTION 2: TEMPERATURE ANALYSIS BY SPECIES
-Between 2025-12-05 to 2025-12-05
+Between 2025-12-07 to 2025-12-07
 --------------------------------------------------
 
-Species                        Avg Temp(캜)    Min(캜)      Max(캜)      Observations
+Species                        Avg Temp(째C)    Min(째C)      Max(째C)      Observations
 -------------------------------------------------------------------------------------
-Green Parakeet                 13.8            10.8         17.8         100
-Trumpeter Swan                 -5.6            -10.6        0.3          100
-Mourning Dove                  21.5            16.8         27.8         93
-Brewer's Blackbird             1.3             -1.8         5.5          90
-White-winged Scoter            -4.8            -8.3         -0.8         61
-Snow Goose                     10.2            8.5          11.7         57
-European Starling              -8.2            -13.5        -1.7         50
-Tundra Swan                    -10.6           -14.0        -4.1         50
-Royal Tern                     9.1             7.5          10.7         50
-Surf Scoter                    1.5             -1.4         5.3          50
-White-faced Ibis               8.9             7.3          10.9         47
-Forster's Tern                 9.1             7.5          10.7         40
-Willet                         9.1             7.5          10.7         35
-Greater White-fronted Goose    8.3             6.3          10.8         32
-Brant                          1.5             -1.4         5.3          30
-Marbled Godwit                 9.1             7.5          10.7         29
-Bonaparte's Gull               -6.7            -10.4        -1.3         25
-Sanderling                     9.1             7.5          10.7         25
-Common Grackle                 22.0            17.5         27.5         23
-Great-tailed Grackle           8.4             6.5          11.4         20
-Lapland Longspur               -7.4            -13.1        2.7          20
-Bohemian Waxwing               -1.8            -5.3         -0.2         20
-Ring-necked Duck               8.4             6.5          11.4         19
-Cedar Waxwing                  4.7             2.5          8.5          17
-White Ibis                     18.0            13.1         25.4         15
-Hooded Merganser               6.1             5.0          7.5          15
-Great Black-backed Gull        1.5             -1.4         5.3          15
-Bufflehead                     6.1             5.0          7.5          13
-Gadwall                        -11.8           -16.6        -4.6         12
-Glossy Ibis                    21.2            16.7         27.0         12
-Black Vulture                  3.8             2.3          5.5          12
-Western Bluebird               3.0             -2.0         10.2         12
-Northern Shoveler              20.3            16.1         25.7         11
-Dark-eyed Junco                -4.9            -8.3         -1.0         10
-Laughing Gull                  25.3            24.6         25.9         10
-Black Skimmer                  25.3            24.6         25.9         10
-Common Merganser               -6.7            -10.4        -1.3         10
-Dunlin                         9.1             7.5          10.7         10
-Northern Rough-winged Swallow  22.4            17.5         29.3         10
-Inca Dove                      14.6            10.8         19.1         10
-Bushtit                        7.7             1.4          15.3         10
-Green Jay                      14.6            10.8         19.1         9
-Red-crowned Amazon             14.2            11.2         18.3         8
-Brown Pelican                  21.0            16.6         26.5         8
-Ruddy Turnstone                21.0            16.6         26.5         8
-Ruddy Duck                     -11.8           -16.6        -4.6         8
-Ross's Goose                   8.3             6.3          10.8         8
-Red-breasted Merganser         N/A             -2.1         2.5          8
-Red Knot                       18.8            14.5         25.7         8
-Red-throated Loon              -4.8            -8.3         -0.8         8
-Snowy Egret                    18.0            13.1         25.4         7
-Black-bellied Whistling-Duck   20.3            16.1         25.7         7
-Eurasian Collared-Dove         4.7             2.5          8.5          7
-White-fronted Amazon           14.2            11.2         18.3         6
-Blue-winged Teal               20.3            16.1         25.7         6
-Mottled Duck                   21.2            16.7         27.0         6
-American Robin                 4.0             2.8          5.9          6
-Wild Turkey                    -10.6           -13.9        -4.2         6
-American Oystercatcher         9.1             7.5          10.7         6
-Black-crowned Night Heron      8.6             6.8          10.9         6
-Brown-headed Cowbird           20.3            16.1         25.7         6
-Nanday Parakeet                20.3            16.1         25.7         6
-Baltimore Oriole               8.5             7.3          10.1         6
-Black-necked Stilt             9.7             8.3          11.2         6
-Pine Grosbeak                  -5.1            -9.0         -2.2         6
-Mallard x Mottled Duck (hybri  20.3            16.1         25.7         5
-American Goldfinch             -4.9            -8.3         -1.0         5
-Western Kingbird               19.9            15.5         26.9         5
-Whooping Crane                 10.3            8.8          12.9         5
-Short-billed Dowitcher         10.3            8.8          12.9         5
-Western Sandpiper              9.1             7.5          10.7         5
-Least Sandpiper                9.1             7.5          10.7         5
-Least Grebe                    8.9             7.3          10.9         5
-Great Egret                    18.0            13.1         25.4         4
-Red-lored Amazon               14.2            11.2         18.3         4
-Sandhill Crane                 20.3            16.1         25.7         4
-Blue Jay                       -4.9            -8.3         -1.0         4
-Carolina Chickadee             -4.9            -8.3         -1.0         4
-Common Gallinule               21.2            16.7         27.0         4
-Horned Grebe                   6.1             5.0          7.5          4
-Horned Lark                    -11.4           -15.3        -4.9         4
-Fish Crow                      24.3            20.4         29.5         4
-Clapper Rail                   20.9            17.4         26.6         4
-Wood Duck                      8.4             6.5          11.4         4
-Yellow-crowned Night Heron     8.6             6.8          10.9         4
-Mountain Chickadee             -1.3            -4.7         4.0          4
-Great Blue Heron               18.0            13.1         25.4         3
-Double-crested Cormorant       18.0            13.1         25.4         3
-American White Pelican         18.0            13.1         25.4         3
-Savannah Sparrow               10.1            7.7          14.1         3
-Eastern Towhee                 20.3            15.4         27.4         3
-Black-capped Chickadee         -16.6           -22.9        -9.7         3
-Short-eared Owl                7.6             5.6          10.7         3
-Boat-tailed Grackle            22.0            17.5         27.5         3
-Song Sparrow                   6.3             5.2          7.6          3
-American Black Duck            -6.7            -10.4        -1.3         3
-Common Ground Dove             20.5            16.1         26.7         3
-American Herring Gull          9.1             7.5          10.7         3
-Piping Plover                  9.1             7.5          10.7         3
-Pyrrhuloxia                    7.7             1.4          15.3         3
-Verdin                         11.3            3.2          18.6         3
-Long-billed Thrasher           14.0            10.8         17.9         3
-Sora                           8.9             7.3          10.9         3
-Least Bittern                  21.6            17.3         28.0         3
-Woodhouse's Scrub-Jay          3.0             -2.0         10.2         3
-Great Horned Owl               -7.8            -12.9        -2.9         2
-Little Blue Heron              18.0            13.1         25.4         2
-Turkey Vulture                 18.0            13.1         25.4         2
-Eastern Bluebird               18.0            13.1         25.4         2
-Lilac-crowned Amazon           14.2            11.2         18.3         2
-Mallard                        20.3            16.1         25.7         2
-Black-bellied Plover           21.0            16.6         26.5         2
-Snowy Plover                   21.0            16.6         26.5         2
-Red-shouldered Hawk            21.5            16.8         27.8         2
-House Finch                    -4.9            -8.3         -1.0         2
-Northern Cardinal              -4.9            -8.3         -1.0         2
-Tufted Titmouse                -4.9            -8.3         -1.0         2
-Downy Woodpecker               -4.9            -8.3         -1.0         2
-American Tree Sparrow          -16.6           -22.9        -9.7         2
-Egyptian Goose                 8.1             6.4          9.9          2
-Brown Thrasher                 6.3             5.2          7.6          2
-Chipping Sparrow               7.1             6.3          8.4          2
-Yellow-rumped Warbler          9.3             7.2          11.7         2
-Bald Eagle                     -0.9            -3.8         2.5          2
-Neotropic Cormorant            8.3             6.3          10.8         2
-Blue-gray Gnatcatcher          24.3            20.4         29.5         2
-Greater Scaup                  N/A             -2.1         2.5          2
-Greater Yellowlegs             20.5            16.1         26.7         2
-Spotted Towhee                 5.5             1.2          13.5         2
-American Coot                  -8.0            -12.4        -2.4         2
-Cave Swallow                   7.0             4.1          10.5         2
-Gray-headed Swamphen           22.4            17.5         29.3         2
-Crested Caracara               21.2            16.7         27.0         2
-Ladder-backed Woodpecker       14.6            10.8         19.1         2
-Burrowing Owl                  22.7            17.9         29.0         2
-Purple Finch                   4.1             2.2          7.0          2
-Vesper Sparrow                 19.1            14.4         25.9         2
-Lesser Goldfinch               7.7             1.4          15.3         2
-Anna's Hummingbird             7.7             1.4          15.3         2
-Gray Partridge                 -5.4            -7.7         -2.7         2
-Hermit Thrush                  -1.5            -3.0         N/A          2
-Plain Chachalaca               14.0            10.8         17.9         2
-Red Junglefowl                 23.6            20.7         27.9         2
-Redhead                        8.9             7.3          10.9         2
-Virginia Rail                  21.6            17.3         28.0         2
-Pine Siskin                    6.2             4.9          8.0          2
-Harris's Sparrow               1.3             -2.7         9.2          2
-Blue-crowned Parakeet          22.7            17.7         29.3         2
-Snow Bunting                   -9.8            -15.0        -2.6         2
-Sandwich Tern                  10.9            9.2          13.1         2
-Gull-billed Tern               10.9            9.2          13.1         2
-Greater Roadrunner             7.6             3.8          14.9         2
-Eastern Screech-Owl            -3.2            -6.5         -0.2         1
-Barred Owl                     20.7            16.5         27.8         1
-House Sparrow                  -0.2            -1.8         2.3          1
-Belted Kingfisher              18.0            13.1         25.4         1
-Osprey                         18.0            13.1         25.4         1
-Wood Stork                     18.0            13.1         25.4         1
-Common Yellowthroat            18.0            13.1         25.4         1
-Yellow-bellied Sapsucker       25.3            24.6         25.9         1
-Ruffed Grouse                  -17.1           -22.5        -10.7        1
-Muscovy Duck                   20.3            16.1         25.7         1
-Roseate Spoonbill              20.3            16.1         25.7         1
-Anhinga                        20.3            16.1         25.7         1
-Pied-billed Grebe              20.3            16.1         25.7         1
-Tricolored Heron               20.3            16.1         25.7         1
-American Kestrel               25.6            25.2         26.0         1
-Broad-winged Hawk              25.6            25.2         26.0         1
-Palm Warbler                   21.0            16.6         26.5         1
-Limpkin                        21.5            16.8         27.8         1
-Green Heron                    21.5            16.8         27.8         1
-Northern Mockingbird           21.5            16.8         27.8         1
-Green-winged Teal              20.3            16.1         25.7         1
-Northern Pintail               8.6             7.4          10.6         1
-Snail Kite                     22.8            19.0         28.8         1
-Killdeer                       10.1            7.7          14.1         1
-Sharp-shinned Hawk             -4.9            -8.3         -1.0         1
-Red-winged Blackbird           -4.9            -8.3         -1.0         1
-Hairy Woodpecker               -4.9            -8.3         -1.0         1
-White-breasted Nuthatch        -4.9            -8.3         -1.0         1
-Northern Flicker               -4.9            -8.3         -1.0         1
-Pileated Woodpecker            -4.9            -8.3         -1.0         1
-Red-breasted Nuthatch          -4.9            -8.3         -1.0         1
-Red-bellied Woodpecker         -4.9            -8.3         -1.0         1
-Carolina Wren                  -4.9            -8.3         -1.0         1
-Swamp Sparrow                  20.3            15.4         27.4         1
-Northern Bobwhite              20.3            15.4         27.4         1
-Eastern Phoebe                 20.3            15.4         27.4         1
-American Woodcock              1.1             -3.1         8.5          1
-White-throated Sparrow         6.1             4.9          7.3          1
-Red-tailed Hawk                -8.9            -13.3        -2.2         1
-White-eyed Vireo               21.2            16.7         27.0         1
-Northern House Wren            21.2            16.7         27.0         1
-Indigo Bunting                 21.2            16.7         27.0         1
-Gray Catbird                   21.2            16.7         27.0         1
-American Crow                  18.1            12.7         25.3         1
-Rock Pigeon                    -7.7            -11.6        -2.6         1
-Common Loon                    6.1             5.0          7.5          1
-Green Kingfisher               9.3             7.2          11.7         1
-Lincoln's Sparrow              9.3             7.2          11.7         1
-Loggerhead Shrike              7.1             6.3          8.4          1
-Orange-crowned Warbler         9.3             7.2          11.7         1
-Wilson's Warbler               9.3             7.2          11.7         1
-Field Sparrow                  0.9             -0.4         3.1          1
-Northern Harrier               -8.0            -11.8        -2.6         1
-Red-headed Woodpecker          0.9             -0.4         3.1          1
-American Wigeon                -10.6           -16.0        -3.1         1
-Merlin                         5.2             0.4          10.5         1
-Cooper's Hawk                  7.2             6.3          8.5          1
-Ring-billed Gull               21.3            16.6         28.5         1
-Ruby-crowned Kinglet           8.3             6.3          10.8         1
-Tree Swallow                   8.3             6.3          10.8         1
-Winter Wren                    8.3             6.3          10.8         1
-Brown Creeper                  -11.3           -16.9        -3.6         1
-Sedge Wren                     8.3             6.3          10.8         1
-White-crowned Sparrow          -11.3           -16.9        -3.6         1
-Caspian Tern                   10.3            8.8          12.9         1
-Lesser Scaup                   15.2            9.3          24.0         1
-Northern Yellow Warbler        24.3            20.4         29.5         1
-Ovenbird                       24.3            20.4         29.5         1
-Seaside Sparrow                9.1             7.5          10.7         1
-Reddish Egret                  9.1             7.5          10.7         1
-Marsh Wren                     9.1             7.5          10.7         1
-Black Scoter                   1.5             -1.4         5.3          1
-Long-tailed Duck               1.5             -1.4         5.3          1
-Golden-crowned Kinglet         -9.9            -15.7        -5.5         1
-Common Raven                   -9.9            -15.7        -5.5         1
-Western Screech-Owl            1.6             -2.4         7.9          1
-Wilson's Snipe                 8.8             7.0          12.0         1
-Common Goldeneye               -8.5            -12.9        -2.5         1
-American Pipit                 -1.0            -3.1         2.6          1
-Black-throated Sparrow         14.6            10.8         19.1         1
-Cactus Wren                    14.6            10.8         19.1         1
-Golden-fronted Woodpecker      14.6            10.8         19.1         1
-White-tipped Dove              14.6            10.8         19.1         1
-Tufted x Black-crested Titmou  5.5             1.2          12.3         1
-White-winged Dove              14.6            10.8         19.1         1
-Fox Sparrow                    -9.8            -14.4        -4.0         1
-LeConte's Sparrow              -2.2            -6.9         6.8          1
-Black-billed Magpie            -4.0            -8.1         2.4          1
-Cackling Goose                 -11.3           -16.9        -3.6         1
-Black-crested Titmouse         9.6             6.8          14.7         1
-Canvasback                     6.4             5.1          9.0          1
-Rough-legged Hawk              -11.4           -16.7        -3.4         1
-Rufous Hummingbird             8.2             6.5          10.3         1
-Rusty Blackbird                -4.5            -9.1         1.2          1
-Canyon Towhee                  7.7             1.4          15.3         1
-Abert's Towhee                 11.5            5.9          18.0         1
-Curve-billed Thrasher          11.5            5.9          18.0         1
-Harris's Hawk                  11.5            5.9          18.0         1
-Gila Woodpecker                11.5            5.9          18.0         1
-Black Phoebe                   11.3            3.2          18.6         1
-Magnificent Frigatebird        24.6            20.0         30.4         1
-Yellow-throated Warbler        24.2            20.5         29.5         1
-Great Kiskadee                 14.0            10.8         17.9         1
-Brown-headed Nuthatch          2.4             0.1          6.3          1
-Pine Warbler                   2.4             0.1          6.3          1
-Vermilion Flycatcher           8.9             7.3          10.9         1
-White-tailed Hawk              8.9             7.3          10.9         1
-Lesser Black-backed Gull       23.7            20.3         28.5         1
-Dickcissel                     -5.8            -8.7         -2.5         1
-Broad-billed Hummingbird       10.4            4.7          17.7         1
-White-tailed Kite              9.1             7.5          10.7         1
-King Rail                      21.6            17.3         28.0         1
-Indian Peafowl                 22.6            18.8         28.7         1
-Eurasian Tree Sparrow          -8.0            -13.1        -0.8         1
-American Redstart              22.7            17.7         29.3         1
-Steller's Jay                  3.0             -2.0         10.2         1
-Harlequin Duck                 -6.6            -9.1         -3.8         1
-Phainopepla                    9.9             4.8          16.6         1
-Spotted Sandpiper              14.3            12.1         17.9         1
-Mallard x American Black Duck  -12.4           -18.6        -6.1         1
-American Barn Owl              14.2            11.2         18.3         1
-Gray Hawk                      14.2            11.2         18.3         1
-Canada Goose                   -10.4           -14.2        -5.7         0
-Western Cattle-Egret           10.3            8.8          12.9         0
-Eastern Meadowlark             2.9             1.3          4.2          0
-Mute Swan                      -6.8            -10.3        -2.5         0
-Monk Parakeet                  20.7            16.2         26.0         0
-Snowy Owl                      -6.8            -11.5        -3.4         0
+Bald Eagle                     -1.9            -4.2         0.6          1
 
-Overall average temperature: 8.53캜
+Overall average temperature: -1.90째C
 
 --------------------------------------------------
 SECTION 3: CLIMATE ZONE DISTRIBUTION
-Between 2025-12-05 to 2025-12-05
+Between 2025-12-07 to 2025-12-07
 --------------------------------------------------
 
 Climate Zone                             Percentage
 -------------------------------------------------------
-Cfa (Humid subtropical, no dry season)   66.16%
-Dfa (Humid continental, no dry season, hot summer) 13.01%
-BSh (Subtropical steppe)                 9.10%
-Dfb (Humid continental, no dry season, warm summer) 5.83%
-Am (Tropical monsoon)                    1.63%
-BSk (Mid-latitude steppe)                1.40%
-Aw (Tropical wet and dry or savanna)     1.34%
-Csa (Mediterranean, hot summer)          0.93%
-BWh (Subtropical desert)                 0.47%
-Cfb (Marine west coast, warm summer)     0.06%
-Af (Tropical rainforest)                 0.06%
+Cfa (Humid subtropical, no dry season)   53.72%
+Dfb (Humid continental, no dry season, warm summer) 22.21%
+Dfa (Humid continental, no dry season, hot summer) 10.62%
+Am (Tropical monsoon)                    8.14%
+Cfb (Marine west coast, warm summer)     4.16%
+Af (Tropical rainforest)                 1.15%
 
 ======================================================================
 END OF REPORT
