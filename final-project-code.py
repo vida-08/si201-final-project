@@ -545,9 +545,10 @@ def calc_total_observations(birds_database, location_list): #Kaz
     
     # Query to sum how_many per bird species for the given locations
     cur.execute(f"""
-        SELECT bo.com_name, bo.sci_name, SUM(bo.how_many) as total_counts, bo.obs_unix_timestamp
+        SELECT bo.com_name, bo.sci_name, SUM(bo.how_many) as total_counts, t.obs_unix_timestamp
         FROM bird_observations bo
         JOIN locations l ON bo.location_id = l.id
+        JOIN timestamps t ON bo.timestamp_id = t.id
         WHERE l.loc_name IN ({placeholders})
         GROUP BY bo.species_code, bo.com_name, bo.sci_name
         ORDER BY total_counts DESC
@@ -561,10 +562,10 @@ def calc_total_observations(birds_database, location_list): #Kaz
     for common_name, scientific_name, total_counts, timestamp in results:
 
         # Find earliest and latest observation dates for the species
-        start_date = min(row[3] for row in results if row[3] is not None)
-        end_date = max(row[3] for row in results if row[3] is not None)
-        start_date = datetime.utcfromtimestamp(int(start_date)).strftime('%Y-%m-%d')
-        end_date = datetime.utcfromtimestamp(int(end_date)).strftime('%Y-%m-%d')
+        timestamps = [row[3] for row in results if row[3] is not None]
+
+        start_date = datetime.utcfromtimestamp(int(min(timestamps))).strftime('%Y-%m-%d')
+        end_date   = datetime.utcfromtimestamp(int(max(timestamps))).strftime('%Y-%m-%d')
 
         observation_summary[common_name] = {
             'scientific_name': scientific_name,
@@ -584,10 +585,11 @@ def calc_climate_type_percentage(birds_database): #Vida
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT kz.koeppen_geiger_zone, kz.zone_description, bo.how_many, bo.obs_unix_timestamp
+    SELECT kz.koeppen_geiger_zone, kz.zone_description, bo.how_many, t.obs_unix_timestamp
         FROM bird_observations bo
         JOIN locations l ON bo.location_id = l.id
         JOIN koeppen_zones kz ON l.koeppen_id = kz.id
+        JOIN timestamps t ON bo.timestamp_id = t.id
         WHERE kz.koeppen_geiger_zone IS NOT NULL
     """)
 
@@ -634,21 +636,23 @@ def calc_historical_avg_temp(birds_database, species_name=None): #Mizuki
     if species_name:
         # Query for a specific species using JOIN
         cur.execute("""
-            SELECT bo.com_name, bo.sci_name, 
-                   wd.temperature_mean, wd.temperature_max, wd.temperature_min,
-                    bo.how_many, bo.obs_unix_timestamp
+            SELECT bo.com_name, bo.sci_name,
+                wd.temperature_mean, wd.temperature_max, wd.temperature_min,
+                bo.how_many, t.obs_unix_timestamp
             FROM bird_observations bo
             JOIN weather_data wd ON bo.id = wd.bird_observation_id
+            JOIN timestamps t ON bo.timestamp_id = t.id
             WHERE bo.com_name LIKE ?
         """, (f"%{species_name}%",))
     else:
         # Query for all species using JOIN
         cur.execute("""
-            SELECT bo.com_name, bo.sci_name, 
-                   wd.temperature_mean, wd.temperature_max, wd.temperature_min,
-                    bo.how_many, bo.obs_unix_timestamp
+            SELECT bo.com_name, bo.sci_name,
+                wd.temperature_mean, wd.temperature_max, wd.temperature_min,
+                bo.how_many, t.obs_unix_timestamp
             FROM bird_observations bo
             JOIN weather_data wd ON bo.id = wd.bird_observation_id
+            JOIN timestamps t ON bo.timestamp_id = t.id
         """)
     
     rows = cur.fetchall()
@@ -1076,6 +1080,8 @@ def request_input_query(query_dict):
     # Request user input for location and species queries
     query_dict['location'] = input("Enter location (e.g., 'Ann Arbor, US'): ").strip()
     query_dict['species'] = input("Enter bird species common name (e.g., 'Bald Eagle') (enter NONE input for all species): ").strip()
+    if query_dict['species'].upper() == 'NONE':
+        query_dict['species'] = None
 
     return query_dict
 
