@@ -251,7 +251,16 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
         )
     """)
 
-    # TABLE 3: BIRD OBSERVATIONS
+    # Table 3: Timestamps
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS timestamps (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            obs_dt TEXT UNIQUE,
+            obs_unix_timestamp REAL
+        )
+    """)
+
+    # TABLE 4: BIRD OBSERVATIONS
     cur.execute("""
         CREATE TABLE IF NOT EXISTS bird_observations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -259,12 +268,11 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
             com_name TEXT,
             sci_name TEXT,
             location_id INTEGER,
-            obs_dt TEXT,
-            obs_unix_timestamp REAL,
+            timestamp_id INTEGER,
             how_many INTEGER,
-            sub_id TEXT,
-            UNIQUE(species_code, obs_dt, location_id),
-            FOREIGN KEY(location_id) REFERENCES locations(id)
+            UNIQUE(species_code, location_id, timestamp_id),
+            FOREIGN KEY(location_id) REFERENCES locations(id),
+            FOREIGN KEY(timestamp_id) REFERENCES timestamps(id)
         )
     """)
 
@@ -327,24 +335,36 @@ def create_bird_database(raw_bird_data, db_name=DB_NAME, max_rows_per_run=20): #
             continue
         location_id = row[0]
 
+        # Insert timestamps
+        cur.execute("""
+            INSERT OR IGNORE INTO timestamps (obs_dt, obs_unix_timestamp)
+            VALUES (?, ?)
+        """, (obs_dt, unix_ts))
+
+        # Retrieve timestamp_id
+        cur.execute("""
+            SELECT id FROM timestamps
+            WHERE obs_dt = ?
+        """, (obs_dt,))
+        row = cur.fetchone()
+        if not row:
+            continue
+        timestamp_id = row[0]
+
         # Insert bird observation
         cur.execute("""
             INSERT OR IGNORE INTO bird_observations (
                 species_code, com_name, sci_name,
-                location_id, obs_dt, obs_unix_timestamp,
-                how_many, sub_id
+                location_id, timestamp_id, how_many
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
             obs.get("speciesCode"),
             obs.get("comName"),
             obs.get("sciName"),
             location_id,
-            obs_dt,
-            unix_ts,
-            obs.get("howMany"),
-            obs.get("subId")
+            timestamp_id,
+            obs.get("howMany")
         ))
 
         if cur.rowcount > 0:
