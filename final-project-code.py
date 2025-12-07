@@ -415,7 +415,6 @@ def weather_until_complete(db_name=DB_NAME, max_rows_per_run=20):
             cur.execute("SELECT COUNT(*) FROM weather_data")
             completed_weather = cur.fetchone()[0]
         except sqlite3.OperationalError:
-            # Table doesn't exist yet
             completed_weather = 0
         
         print(f"Weather data progress: {completed_weather}/{total_observations} observations")
@@ -427,18 +426,19 @@ def weather_until_complete(db_name=DB_NAME, max_rows_per_run=20):
         # Get bird observations that don't have weather data yet (up to max_rows_per_run)
         try:
             cur.execute("""
-                SELECT bo.id, l.latitude, l.longitude, bo.obs_unix_timestamp
+                SELECT bo.id, l.latitude, l.longitude, t.obs_unix_timestamp
                 FROM bird_observations bo
                 JOIN locations l ON bo.location_id = l.id
+                JOIN timestamps t ON bo.timestamp_id = t.id
                 WHERE bo.id NOT IN (SELECT bird_observation_id FROM weather_data)
                 LIMIT ?
             """, (max_rows_per_run,))
-        except:
-            # If weather_data table doesn't exist, select all bird observations (up to max_rows_per_run)
+        except sqlite3.OperationalError:
             cur.execute("""
-                SELECT bo.id, l.latitude, l.longitude, bo.obs_unix_timestamp
+                SELECT bo.id, l.latitude, l.longitude, t.obs_unix_timestamp
                 FROM bird_observations bo
                 JOIN locations l ON bo.location_id = l.id
+                JOIN timestamps t ON bo.timestamp_id = t.id
                 LIMIT ?
             """, (max_rows_per_run,))
         
@@ -460,17 +460,17 @@ def weather_until_complete(db_name=DB_NAME, max_rows_per_run=20):
             
             if weather_dict:
                 # Add the bird_observation_id to link the weather data
-                weather_dict['bird_observation_id'] = obs_id
+                weather_dict["bird_observation_id"] = obs_id
                 weather_data_list.append(weather_dict)
             else:
-                print(f"Failed to get weather data for observation {obs_id}")
+                print(f"Failed to retrieve weather for observation {obs_id}")
         
         # Insert weather data into the database
         if weather_data_list:
             create_weather_table(weather_data_list)
             print(f"Added weather data for {len(weather_data_list)} observations")
         else:
-            print("No valid weather data to add")
+            print("No valid weather data retrieved")
             break
     
     conn.close()
@@ -492,7 +492,6 @@ def create_weather_table(weather_data, db_name=DB_NAME): #Mizuki
             bird_observation_id INTEGER UNIQUE,
             latitude REAL,
             longitude REAL,
-            date TEXT,
             temperature_mean REAL,
             temperature_max REAL,
             temperature_min REAL,
@@ -500,21 +499,20 @@ def create_weather_table(weather_data, db_name=DB_NAME): #Mizuki
             FOREIGN KEY(bird_observation_id) REFERENCES bird_observations(id)
         )
     """)
-    
+
     inserted = 0
     for weather in weather_data:
         try:
             cur.execute("""
                 INSERT OR IGNORE INTO weather_data (
-                    bird_observation_id, latitude, longitude, date,
+                    bird_observation_id, latitude, longitude,
                     temperature_mean, temperature_max, temperature_min, unix_timestamp
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
                 weather.get('bird_observation_id'),
                 weather.get('latitude'),
                 weather.get('longitude'),
-                weather.get('date'),
                 weather.get('temperature_mean'),
                 weather.get('temperature_max'),
                 weather.get('temperature_min'),
@@ -528,7 +526,7 @@ def create_weather_table(weather_data, db_name=DB_NAME): #Mizuki
     
     conn.commit()
     conn.close()
-    
+
     print(f"Inserted {inserted} weather records into database")
     return db_name
     pass
