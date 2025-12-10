@@ -16,7 +16,6 @@
 
 import json
 import requests
-import re
 import unittest
 import os
 from datetime import datetime, timezone
