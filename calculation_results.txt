@@ -5,24 +5,234 @@ Team VMK: Weijian Fan (Vida), Kawani Mumtaz, Mizuki Kuno
 
 --------------------------------------------------
 SECTION 1: BIRD OBSERVATION COUNTS BY SPECIES
-For location: michigan between 2025-12-07 to 2025-12-07
+For location:  between 2025-12-07 to 2025-12-07
 --------------------------------------------------
 
 Common Name                         Scientific Name                     Count
 --------------------------------------------------------------------------------
 Bohemian Waxwing                    Bombycilla garrulus                 70
+Common Goldeneye                    Bucephala clangula                  70
+Black Skimmer                       Rynchops niger                      60
+Black-bellied Whistling-Duck        Dendrocygna autumnalis              50
+White Ibis                          Eudocimus albus                     50
+American White Pelican              Pelecanus erythrorhynchos           47
+Horned Lark                         Eremophila alpestris                37
+Northern Rough-winged Swallow       Stelgidopteryx serripennis          32
+Ruddy Turnstone                     Arenaria interpres                  25
+American Wigeon                     Mareca americana                    20
+Muscovy Duck                        Cairina moschata                    20
+Ring-billed Gull                    Larus delawarensis                  20
+Red Knot                            Calidris canutus                    18
+Rock Pigeon                         Columba livia                       18
+Canada Goose                        Branta canadensis                   15
+Great-tailed Grackle                Quiscalus mexicanus                 15
+House Sparrow                       Passer domesticus                   14
+Tundra Swan                         Cygnus columbianus                  14
+Great Black-backed Gull             Larus marinus                       13
+Sanderling                          Calidris alba                       12
 European Starling                   Sturnus vulgaris                    11
+Florida Scrub-Jay                   Aphelocoma coerulescens             11
+White-crowned Sparrow               Zonotrichia leucophrys              11
+American Robin                      Turdus migratorius                  10
+Least Sandpiper                     Calidris minutilla                  10
+Long-tailed Duck                    Clangula hyemalis                   10
+Redhead                             Aythya americana                    10
+Roseate Spoonbill                   Platalea ajaja                      10
+Evening Grosbeak                    Hesperiphona vespertina             9
+Long-billed Dowitcher               Limnodromus scolopaceus             9
+Yellow-rumped Warbler               Setophaga coronata                  9
+Anhinga                             Anhinga anhinga                     8
+Brant                               Branta bernicla                     8
+Forster's Tern                      Sterna forsteri                     8
+Piping Plover                       Charadrius melodus                  8
+Whooping Crane                      Grus americana                      8
+Wood Duck                           Aix sponsa                          8
+Harlequin Duck                      Histrionicus histrionicus           7
+Rusty Blackbird                     Euphagus carolinus                  7
+American Black Duck                 Anas rubripes                       6
+American Tree Sparrow               Spizelloides arborea                6
+Cedar Waxwing                       Bombycilla cedrorum                 6
+Common Gallinule                    Gallinula galeata                   6
+Pine Grosbeak                       Pinicola enucleator                 6
+Gray-headed Swamphen                Porphyrio poliocephalus             6
+Red-winged Blackbird                Agelaius phoeniceus                 6
+Ring-necked Duck                    Aythya collaris                     6
+Savannah Sparrow                    Passerculus sandwichensis           6
+American Pipit                      Anthus rubescens                    5
+Western Cattle-Egret                Ardea ibis                          5
+Green-winged Teal                   Anas crecca                         5
+Great Cormorant                     Phalacrocorax carbo                 5
+Laughing Gull                       Leucophaeus atricilla               5
 Northern Cardinal                   Cardinalis cardinalis               5
+Red-necked Grebe                    Podiceps grisegena                  5
+Trumpeter Swan                      Cygnus buccinator                   5
 American Goldfinch                  Spinus tristis                      4
+Nanday Parakeet                     Aratinga nenday                     4
+Caspian Tern                        Hydroprogne caspia                  4
+Double-crested Cormorant            Nannopterum auritum                 4
+Eastern Bluebird                    Sialia sialis                       4
+Graylag Goose                       Anser anser                         4
+Northern Pintail                    Anas acuta                          4
+American Avocet                     Recurvirostra americana             3
+American Crow                       Corvus brachyrhynchos               3
+Common Ground Dove                  Columbina passerina                 3
+Glossy Ibis                         Plegadis falcinellus                3
+House Finch                         Haemorhous mexicanus                3
+Lesser Scaup                        Aythya affinis                      3
+Northern Gannet                     Morus bassanus                      3
+Northern Shoveler                   Spatula clypeata                    3
+Palm Warbler                        Setophaga palmarum                  3
+Purple Gallinule                    Porphyrio martinica                 3
+Purple Sandpiper                    Calidris maritima                   3
+Sandhill Crane                      Antigone canadensis                 3
+Snow Bunting                        Plectrophenax nivalis               3
 White-winged Crossbill              Loxia leucoptera                    3
+Winter Wren                         Troglodytes hiemalis                3
+American Kestrel                    Falco sparverius                    2
+Black-bellied Plover                Pluvialis squatarola                2
+Brown-headed Cowbird                Molothrus ater                      2
+Brown Creeper                       Certhia americana                   2
+Blue-gray Gnatcatcher               Polioptila caerulea                 2
+Burrowing Owl                       Athene cunicularia                  2
 Canvasback                          Aythya valisineria                  2
+Common Grackle                      Quiscalus quiscula                  2
+Dark-eyed Junco                     Junco hyemalis                      2
+Dunlin                              Calidris alpina                     2
+Egyptian Goose                      Alopochen aegyptiaca                2
+Eurasian Tree Sparrow               Passer montanus                     2
+Gadwall                             Mareca strepera                     2
+Greater Scaup                       Aythya marila                       2
+Greater White-fronted Goose         Anser albifrons                     2
+Hooded Merganser                    Lophodytes cucullatus               2
+Horned Grebe                        Podiceps auritus                    2
+Killdeer                            Charadrius vociferus                2
+Lesser Yellowlegs                   Tringa flavipes                     2
+Loggerhead Shrike                   Lanius ludovicianus                 2
+Mallard                             Anas platyrhynchos                  2
+Muscovy Duck x Mallard (hybrid)     Cairina moschata x Anas platyrhynchos 2
+Mute Swan                           Cygnus olor                         2
+Scaly-breasted Munia                Lonchura punctulata                 2
+Osprey                              Pandion haliaetus                   2
+Peregrine Falcon                    Falco peregrinus                    2
+Razorbill                           Alca torda                          2
+Red-breasted Merganser              Mergus serrator                     2
+Royal Tern                          Thalasseus maximus                  2
+Ruby-throated Hummingbird           Archilochus colubris                2
+Ruddy Duck                          Oxyura jamaicensis                  2
+Surf Scoter                         Melanitta perspicillata             2
+Tree Swallow                        Tachycineta bicolor                 2
+Tufted Titmouse                     Baeolophus bicolor                  2
+Turkey Vulture                      Cathartes aura                      2
+Mallard x Mottled Duck (hybrid)     Anas platyrhynchos x fulvigula      2
+American Coot                       Fulica americana                    2
+American Herring Gull               Larus smithsonianus                 1
+Bald Eagle                          Haliaeetus leucocephalus            1
+Baltimore Oriole                    Icterus galbula                     1
+Barnacle Goose                      Branta leucopsis                    1
+Black-crowned Night Heron           Nycticorax nycticorax               1
+Belted Kingfisher                   Megaceryle alcyon                   1
+Black-capped Chickadee              Poecile atricapillus                1
+Black-necked Stilt                  Himantopus mexicanus                1
+Black Guillemot                     Cepphus grylle                      1
+Black Vulture                       Coragyps atratus                    1
+Blue Jay                            Cyanocitta cristata                 1
+Brown-headed Nuthatch               Sitta pusilla                       1
+Bonaparte's Gull                    Chroicocephalus philadelphia        1
+Barred Owl                          Strix varia                         1
+Brown Pelican                       Pelecanus occidentalis              1
+Brown Thrasher                      Toxostoma rufum                     1
+Bufflehead                          Bucephala albeola                   1
+Blue-headed Vireo                   Vireo solitarius                    1
+Carolina Chickadee                  Poecile carolinensis                1
+Carolina Wren                       Thryothorus ludovicianus            1
+Chestnut-collared Longspur          Calcarius ornatus                   1
+Chipping Sparrow                    Spizella passerina                  1
+Clapper Rail                        Rallus crepitans                    1
+Common Loon                         Gavia immer                         1
+Common Merganser                    Mergus merganser                    1
+Indian Peafowl                      Pavo cristatus                      1
+Common Raven                        Corvus corax                        1
+Common Yellowthroat                 Geothlypis trichas                  1
+Cooper's Hawk                       Astur cooperii                      1
+Downy Woodpecker                    Dryobates pubescens                 1
+Eastern Meadowlark                  Sturnella magna                     1
+Eastern Screech-Owl                 Megascops asio                      1
+Eastern Phoebe                      Sayornis phoebe                     1
+Eastern Towhee                      Pipilo erythrophthalmus             1
+Field Sparrow                       Spizella pusilla                    1
+Fish Crow                           Corvus ossifragus                   1
+Fox Sparrow                         Passerella iliaca                   1
+Golden-crowned Kinglet              Regulus satrapa                     1
+Great Blue Heron                    Ardea herodias                      1
+Great Egret                         Ardea alba                          1
+Greater Yellowlegs                  Tringa melanoleuca                  1
+Great Horned Owl                    Bubo virginianus                    1
+Green Heron                         Butorides virescens                 1
+Gray Catbird                        Dumetella carolinensis              1
 Hairy Woodpecker                    Leuconotopicus villosus             1
+Harris's Sparrow                    Zonotrichia querula                 1
+Hermit Thrush                       Catharus guttatus                   1
+Northern House Wren                 Troglodytes aedon                   1
+Ladder-backed Woodpecker            Dryobates scalaris                  1
+Lapland Longspur                    Calcarius lapponicus                1
+Lesser Black-backed Gull            Larus fuscus                        1
+Little Blue Heron                   Egretta caerulea                    1
+Limpkin                             Aramus guarauna                     1
+Long-billed Curlew                  Numenius americanus                 1
+Magnificent Frigatebird             Fregata magnificens                 1
+Marsh Wren                          Cistothorus palustris               1
+Merlin                              Falco columbarius                   1
+Mourning Dove                       Zenaida macroura                    1
+Northern Flicker                    Colaptes auratus                    1
+Northern Harrier                    Circus hudsonius                    1
+Northern Mockingbird                Mimus polyglottos                   1
+Orange-crowned Warbler              Leiothlypis celata                  1
+Pied-billed Grebe                   Podilymbus podiceps                 1
+Pink-footed Goose                   Anser brachyrhynchus                1
 Pileated Woodpecker                 Dryocopus pileatus                  1
 Pine Siskin                         Spinus pinus                        1
+Pine Warbler                        Setophaga pinus                     1
+Purple Finch                        Haemorhous purpureus                1
 Red-breasted Nuthatch               Sitta canadensis                    1
+Red-bellied Woodpecker              Melanerpes carolinus                1
+Red-headed Woodpecker               Melanerpes erythrocephalus          1
+Red-shouldered Hawk                 Buteo lineatus                      1
+Red-tailed Hawk                     Buteo jamaicensis                   1
+Red-throated Loon                   Gavia stellata                      1
+Ring-necked Pheasant                Phasianus colchicus                 1
+Rough-legged Hawk                   Buteo lagopus                       1
+Ross's Goose                        Anser rossii                        1
+Ruby-crowned Kinglet                Corthylio calendula                 1
+Sandwich Tern                       Thalasseus sandvicensis             1
+Sharp-shinned Hawk                  Accipiter striatus                  1
+Snowy Egret                         Egretta thula                       1
+Snow Goose                          Anser caerulescens                  1
+Song Sparrow                        Melospiza melodia                   1
+Spotted Sandpiper                   Actitis macularius                  1
+Swamp Sparrow                       Melospiza georgiana                 1
+Tricolored Heron                    Egretta tricolor                    1
+White-breasted Nuthatch             Sitta carolinensis                  1
+White-tailed Hawk                   Geranoaetus albicaudatus            1
+White-tailed Kite                   Elanus leucurus                     1
+White-throated Sparrow              Zonotrichia albicollis              1
+White-winged Dove                   Zenaida asiatica                    1
+White-winged Scoter                 Melanitta deglandi                  1
+Wilson's Snipe                      Gallinago delicata                  1
+Wild Turkey                         Meleagris gallopavo                 1
+Wood Stork                          Mycteria americana                  1
+Crested Caracara                    Caracara plancus                    1
+Yellow-crowned Night Heron          Nyctanassa violacea                 1
+Yellow-bellied Sapsucker            Sphyrapicus varius                  1
+Yellow-throated Warbler             Setophaga dominica                  1
+Black Scoter                        Melanitta americana                 0
+Black Swan                          Cygnus atratus                      0
+Boat-tailed Grackle                 Quiscalus major                     0
+Common Eider                        Somateria mollissima                0
+Eurasian Collared-Dove              Streptopelia decaocto               0
+Red Junglefowl                      Gallus gallus                       0
 
-Total unique species: 10
-Total observations: 99
+Total unique species: 220
+Total observations: 1132
 
 --------------------------------------------------
 SECTION 2: TEMPERATURE ANALYSIS BY SPECIES
@@ -31,9 +241,228 @@ Between 2025-12-07 to 2025-12-07
 
 Species                        Avg Temp(°C)    Min(°C)      Max(°C)      Observations
 -------------------------------------------------------------------------------------
+Common Goldeneye               -0.5            -1.4         0.4          70
+Bohemian Waxwing               -9.3            -10.0        -8.5         70
+Black Skimmer                  19.0            16.6         21.3         60
+White Ibis                     23.7            20.3         27.7         50
+Black-bellied Whistling-Duck   9.5             8.4          10.3         50
+American White Pelican         20.5            16.3         26.0         47
+Horned Lark                    3.1             1.0          5.8          37
+Northern Rough-winged Swallow  1.3             -1.7         5.3          32
+Ruddy Turnstone                21.7            19.1         24.7         25
+Ring-billed Gull               -1.9            -5.2         1.8          20
+American Wigeon                2.8             0.9          4.9          20
+Muscovy Duck                   23.7            20.3         27.7         20
+Rock Pigeon                    1.6             -0.8         4.7          18
+Red Knot                       21.7            19.1         24.7         18
+Canada Goose                   -2.4            -5.3         1.8          15
+Great-tailed Grackle           19.5            16.3         24.1         15
+House Sparrow                  -2.3            -4.4         1.2          14
+Tundra Swan                    9.9             8.5          10.7         14
+Great Black-backed Gull        -1.9            -5.2         1.8          13
+Sanderling                     24.4            19.7         29.8         12
+European Starling              -6.5            -10.2        -2.8         11
+White-crowned Sparrow          1.0             -2.3         4.4          11
+Florida Scrub-Jay              20.1            17.7         24.6         11
+Long-tailed Duck               0.7             -2.0         4.0          10
+Redhead                        1.0             -2.3         4.1          10
+American Robin                 4.3             0.4          10.4         10
+Roseate Spoonbill              22.0            18.3         28.2         10
+Least Sandpiper                18.5            15.0         24.3         10
+Yellow-rumped Warbler          5.1             0.2          9.7          9
+Evening Grosbeak               -3.0            -6.8         2.3          9
+Long-billed Dowitcher          18.5            15.0         24.3         9
+Anhinga                        20.5            16.3         26.0         8
+Brant                          -1.7            -5.3         2.4          8
+Forster's Tern                 17.9            15.1         22.0         8
+Wood Duck                      1.5             -2.3         6.6          8
+Piping Plover                  19.0            16.6         21.3         8
+Whooping Crane                 18.8            15.7         24.6         8
+Harlequin Duck                 2.5             1.4          3.9          7
+Rusty Blackbird                3.2             -0.8         8.1          7
+American Black Duck            -1.1            -4.0         2.2          6
+Ring-necked Duck               N/A             -1.8         2.3          6
+American Tree Sparrow          -1.5            -2.8         -0.7         6
+Common Gallinule               23.7            20.3         27.7         6
+Red-winged Blackbird           0.2             -2.1         4.6          6
+Cedar Waxwing                  4.0             -0.8         10.4         6
+Gray-headed Swamphen           23.3            19.3         29.2         6
+Pine Grosbeak                  -14.1           -18.4        -10.7        6
+Savannah Sparrow               1.4             -1.4         4.3          6
+Northern Cardinal              -3.0            -6.1         -1.3         5
+Green-winged Teal              2.8             0.9          4.9          5
+American Pipit                 -0.2            -3.5         4.3          5
+Trumpeter Swan                 -1.5            -2.8         -0.7         5
+Western Cattle-Egret           21.6            18.8         25.5         5
+Red-necked Grebe               -1.7            -4.4         1.8          5
+Laughing Gull                  20.5            16.3         26.0         5
+Great Cormorant                -1.6            -4.3         1.9          5
+Double-crested Cormorant       20.5            16.3         26.0         4
+American Goldfinch             -3.0            -6.1         -1.3         4
+Eastern Bluebird               -2.3            -4.4         1.2          4
+Northern Pintail               2.8             0.9          4.9          4
+Nanday Parakeet                20.6            18.1         23.6         4
+Graylag Goose                  1.6             -1.9         7.0          4
+Caspian Tern                   19.9            16.3         26.3         4
+American Crow                  -2.4            -5.3         1.8          3
+Sandhill Crane                 20.5            16.3         26.0         3
+House Finch                    -2.3            -4.4         1.2          3
+Northern Shoveler              -0.3            -2.1         2.0          3
+Palm Warbler                   23.7            20.3         27.7         3
+Lesser Scaup                   -0.9            -2.3         1.3          3
+Purple Sandpiper               2.5             1.4          3.9          3
+Northern Gannet                2.5             1.4          3.9          3
+Glossy Ibis                    20.5            16.3         26.0         3
+Winter Wren                    1.2             -2.0         7.0          3
+Snow Bunting                   -1.6            -4.8         0.1          3
+Common Ground Dove             20.5            16.3         26.0         3
+White-winged Crossbill         -5.9            -7.1         -3.7         3
+Purple Gallinule               25.5            22.5         30.2         3
+American Avocet                19.9            16.3         26.3         3
+Tufted Titmouse                2.9             -0.7         8.7          2
+Mute Swan                      -1.1            -4.0         2.2          2
+Dark-eyed Junco                -2.3            -4.4         1.2          2
+Mallard                        4.2             -0.2         10.5         2
+Brown Creeper                  0.8             -2.6         5.3          2
+Hooded Merganser               1.0             -2.3         4.1          2
+Common Grackle                 1.6             -0.8         4.7          2
+Turkey Vulture                 1.5             -1.9         6.0          2
+Killdeer                       2.8             0.9          4.9          2
+Egyptian Goose                 20.1            17.7         24.6         2
+Gadwall                        9.9             8.5          10.7         2
+American Kestrel               -0.3            -3.6         2.9          2
+Horned Grebe                   -0.9            -2.3         1.3          2
+American Coot                  23.7            20.3         27.7         2
+Ruddy Duck                     -0.9            -2.3         1.3          2
+Red-breasted Merganser         2.5             1.4          3.9          2
+Osprey                         20.5            16.3         26.0         2
+Brown-headed Cowbird           0.2             -2.1         4.6          2
+Loggerhead Shrike              16.0            12.9         22.6         2
+Lesser Yellowlegs              22.0            18.3         28.2         2
+Mallard x Mottled Duck (hybri  21.6            18.8         25.5         2
+Peregrine Falcon               1.2             -2.0         7.0          2
+Greater Scaup                  1.4             -0.7         6.4          2
+Burrowing Owl                  23.8            18.8         29.6         2
+Surf Scoter                    -1.7            -4.4         1.8          2
+Blue-gray Gnatcatcher          4.9             0.2          9.5          2
+Razorbill                      4.6             3.8          6.6          2
+Canvasback                     -6.6            -10.3        -3.0         2
+Muscovy Duck x Mallard (hybri  1.6             -1.9         7.0          2
+Greater White-fronted Goose    1.8             -1.0         7.7          2
+Tree Swallow                   4.9             3.4          6.4          2
+Royal Tern                     20.1            17.7         24.6         2
+Dunlin                         19.9            16.3         26.3         2
+Ruby-throated Hummingbird      9.1             7.4          10.4         2
+Eurasian Tree Sparrow          -8.5            -16.4        -4.6         2
+Black-bellied Plover           20.9            18.5         24.6         2
+Scaly-breasted Munia           17.4            14.5         22.7         2
+American Herring Gull          -1.1            -4.0         2.2          1
+Northern Harrier               -1.1            -4.0         2.2          1
+Song Sparrow                   -1.1            -4.0         2.2          1
+Ruby-crowned Kinglet           1.4             -1.9         6.1          1
+Mourning Dove                  -1.1            -4.0         2.2          1
+Downy Woodpecker               4.1             -0.2         10.4         1
+Common Raven                   1.5             -1.5         5.9          1
+Black Vulture                  2.9             -0.7         8.7          1
+Blue Jay                       2.9             -0.7         8.7          1
+White-throated Sparrow         2.9             -0.7         8.7          1
+Carolina Chickadee             2.9             -0.7         8.7          1
+Carolina Wren                  -0.5            -3.0         2.4          1
 Bald Eagle                     -1.9            -4.2         0.6          1
+Common Loon                    -1.9            -4.2         0.6          1
+White-breasted Nuthatch        -0.5            -3.0         2.4          1
+Black-capped Chickadee         -0.5            -3.0         2.4          1
+Red-shouldered Hawk            -0.8            -2.7         1.4          1
+Red-tailed Hawk                1.6             -0.8         4.7          1
+Red-throated Loon              0.7             -2.0         4.0          1
+Limpkin                        24.4            19.7         29.8         1
+Northern Mockingbird           1.6             -0.8         4.7          1
+Red-bellied Woodpecker         -2.3            -4.4         1.2          1
+Pine Siskin                    -3.0            -6.1         -1.3         1
+Cooper's Hawk                  1.0             -1.8         5.1          1
+Eastern Screech-Owl            3.2             -1.4         9.8          1
+Eastern Meadowlark             -0.7            -3.0         1.3          1
+White-winged Scoter            1.6             -0.8         4.7          1
+Great Blue Heron               N/A             -1.8         2.3          1
+Yellow-bellied Sapsucker       1.6             -0.8         4.7          1
+Fox Sparrow                    -0.8            -4.8         5.3          1
+Belted Kingfisher              2.8             0.9          4.9          1
+Pied-billed Grebe              4.9             4.2          6.8          1
+Bufflehead                     2.8             0.9          4.9          1
+Pileated Woodpecker            -6.6            -8.8         -5.0         1
+Red-breasted Nuthatch          -6.6            -8.8         -5.0         1
+Hairy Woodpecker               -6.6            -8.8         -5.0         1
+Orange-crowned Warbler         8.3             6.7          10.2         1
+Bonaparte's Gull               -0.9            -2.3         1.3          1
+Black-crowned Night Heron      23.7            20.3         27.7         1
+Great Egret                    23.7            20.3         27.7         1
+Baltimore Oriole               14.2            11.8         17.6         1
+Fish Crow                      0.9             -3.1         5.8          1
+Green Heron                    23.7            20.3         27.7         1
+Little Blue Heron              8.9             7.9          10.2         1
+Common Merganser               0.9             -1.8         4.1          1
+Wilson's Snipe                 4.8             0.6          10.0         1
+Black Guillemot                -2.9            -6.5         0.8          1
+Wild Turkey                    0.2             -3.2         4.0          1
+Snowy Egret                    20.5            16.3         26.0         1
+Northern House Wren            20.5            16.3         26.0         1
+Common Yellowthroat            20.5            16.3         26.0         1
+Swamp Sparrow                  20.5            16.3         26.0         1
+Brown-headed Nuthatch          3.2             -1.6         10.4         1
+Indian Peafowl                 20.5            16.3         26.0         1
+Northern Flicker               0.2             -2.1         4.6          1
+Tricolored Heron               16.0            12.9         22.6         1
+Eastern Phoebe                 16.0            12.9         22.6         1
+Yellow-throated Warbler        16.0            12.9         22.6         1
+Chipping Sparrow               3.8             -0.1         9.9          1
+Snow Goose                     0.7             -2.6         5.1          1
+Golden-crowned Kinglet         1.3             -1.2         4.8          1
+Brown Pelican                  3.1             -0.6         8.8          1
+Merlin                         -0.5            -2.6         1.7          1
+Wood Stork                     17.3            14.8         22.7         1
+Field Sparrow                  0.1             -3.0         4.7          1
+Pine Warbler                   3.8             -0.1         9.4          1
+Lesser Black-backed Gull       0.1             -1.6         2.7          1
+Lapland Longspur               0.1             -2.1         2.3          1
+White-winged Dove              14.9            12.0         19.6         1
+Eastern Towhee                 1.5             -2.3         6.6          1
+Sharp-shinned Hawk             8.7             7.1          10.3         1
+Magnificent Frigatebird        21.7            19.1         24.7         1
+Clapper Rail                   8.7             7.1          10.3         1
+Hermit Thrush                  9.9             8.8          10.6         1
+Purple Finch                   -0.1            -1.9         2.1          1
+Greater Yellowlegs             18.0            15.0         23.0         1
+Gray Catbird                   20.5            16.3         26.0         1
+Marsh Wren                     16.2            13.7         19.4         1
+Rough-legged Hawk              -0.9            -2.1         0.6          1
+Brown Thrasher                 3.8             -0.9         11.4         1
+Red-headed Woodpecker          -1.6            -5.8         3.7          1
+Crested Caracara               15.0            12.7         19.6         1
+Ladder-backed Woodpecker       6.5             4.8          9.0          1
+Great Horned Owl               18.1            15.3         22.6         1
+Harris's Sparrow               5.8             3.5          7.5          1
+Yellow-crowned Night Heron     19.5            16.3         24.1         1
+White-tailed Hawk              19.5            17.8         22.0         1
+Sandwich Tern                  19.0            16.6         21.3         1
+Chestnut-collared Longspur     -1.9            -5.2         1.8          1
+White-tailed Kite              19.5            16.3         24.1         1
+Blue-headed Vireo              4.3             0.1          10.7         1
+Barred Owl                     13.9            12.0         16.2         1
+Ross's Goose                   1.5             -1.2         4.6          1
+Pink-footed Goose              -0.9            -4.2         4.5          1
+Barnacle Goose                 -0.9            -4.2         4.5          1
+Spotted Sandpiper              19.9            16.3         26.3         1
+Black-necked Stilt             19.9            16.3         26.3         1
+Long-billed Curlew             18.8            15.7         24.6         1
+Ring-necked Pheasant           1.5             -1.5         5.9          1
+Black Scoter                   1.6             -0.8         4.7          0
+Eurasian Collared-Dove         23.7            20.3         28.7         0
+Boat-tailed Grackle            23.7            20.3         28.7         0
+Red Junglefowl                 23.7            20.3         28.7         0
+Common Eider                   2.5             1.4          3.9          0
+Black Swan                     20.3            16.2         25.2         0
 
-Overall average temperature: -1.90°C
+Overall average temperature: 7.33°C
 
 --------------------------------------------------
 SECTION 3: CLIMATE ZONE DISTRIBUTION
